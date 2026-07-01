@@ -19,14 +19,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { CatalogIcon, ChevronRightIcon, SchemaIcon } from "@/components/icons"
-
-const CATALOG_ITEMS = [
-  { id: "aws_sec_lake", label: "aws_sec_lake", type: "catalog" as const },
-  { id: "main", label: "main", type: "catalog" as const },
-  { id: "security_logs", label: "security_logs", type: "catalog" as const },
-  { id: "bronze", label: "bronze", type: "schema" as const, path: "main.bronze" },
-  { id: "raw_events", label: "raw_events", type: "schema" as const, path: "main.raw_events" },
-] as const
+import { CATALOG_LOCATIONS } from "../../ingest/_shared/catalog-locations"
 
 export default function IngestV2BrowsePage() {
   const router = useRouter()
@@ -82,7 +75,7 @@ export default function IngestV2BrowsePage() {
         </p>
 
         <div className="flex flex-col gap-1 rounded-md border border-border p-2">
-          {CATALOG_ITEMS.map((item) => (
+          {CATALOG_LOCATIONS.map((item) => (
             <ListItem
               key={item.id}
               icon={
@@ -99,9 +92,9 @@ export default function IngestV2BrowsePage() {
               }
             >
               <span className="text-sm text-foreground">{item.label}</span>
-              {"path" in item && item.path && (
+              {item.path ? (
                 <span className="block text-hint text-muted-foreground">{item.path}</span>
-              )}
+              ) : null}
             </ListItem>
           ))}
         </div>

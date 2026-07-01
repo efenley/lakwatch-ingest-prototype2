@@ -5,19 +5,14 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@/components/ui/input-group"
 import { SplitButton } from "@/components/ui/split-button"
 import { DbIcon } from "@/components/ui/db-icon"
-import { CheckCircleFillIcon, FolderIcon, SparkleFillIcon } from "@/components/icons"
+import { SparkleFillIcon } from "@/components/icons"
 import {
   AdvancedOptionsDialog,
   type AdvancedOptionsState,
 } from "../ingest/configure/AdvancedOptionsDialog"
+import { DataLocationPicker } from "../ingest/_shared/DataLocationPicker"
 import { PreviewDock, TablePreviewPanel } from "../ingest/configure/PreviewDock"
 import { TableConfigureForm } from "../ingest/configure/table/TableConfigureForm"
 import {
@@ -26,7 +21,6 @@ import {
 } from "../ingest/configure/details/AdditionalDetailsForm"
 import { IngestColumnCard, IngestColumnShell } from "./IngestColumnShell"
 
-const BROWSE_ROUTE = "/lakewatch/datasources/ingest-v2/browse"
 const AUTO_CONFIGURE_DURATION_MS = 2500
 
 type AutoConfigureStatus = "idle" | "loading" | "complete"
@@ -76,12 +70,15 @@ function IngestV2PageContent() {
     setAutoConfigureStatus("loading")
   }
 
-  function openBrowse() {
-    router.push(BROWSE_ROUTE)
-  }
-
-  function handleInputClick() {
-    if (!hasSelectedLocation) openBrowse()
+  function handleLocationChange(location: string) {
+    const params = new URLSearchParams(searchParams.toString())
+    if (location.trim()) {
+      params.set("location", location.trim())
+    } else {
+      params.delete("location")
+    }
+    const query = params.toString()
+    router.replace(query ? `/lakewatch/datasources/ingest-v2?${query}` : "/lakewatch/datasources/ingest-v2")
   }
 
   return (
@@ -103,34 +100,11 @@ function IngestV2PageContent() {
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <InputGroup className="h-8 flex-1 rounded shadow-xs">
-                <InputGroupInput
-                  aria-label="Data location"
-                  placeholder="catalog.schema.table"
-                  value={selectedLocation}
-                  readOnly
-                  onClick={handleInputClick}
-                  className={!hasSelectedLocation ? "cursor-pointer" : undefined}
-                />
-                <InputGroupAddon align="inline-end">
-                  <InputGroupButton
-                    size="icon-xs"
-                    aria-label="Browse catalog"
-                    onClick={openBrowse}
-                  >
-                    <FolderIcon size={16} className="text-muted-foreground" />
-                  </InputGroupButton>
-                </InputGroupAddon>
-              </InputGroup>
-              {hasSelectedLocation && (
-                <CheckCircleFillIcon
-                  size={16}
-                  className="shrink-0 text-[var(--success)]"
-                  aria-label="Valid data location"
-                />
-              )}
-            </div>
+            <DataLocationPicker
+              value={selectedLocation}
+              onValueChange={handleLocationChange}
+              readOnly
+            />
 
             <div className="mt-auto">
               <Button

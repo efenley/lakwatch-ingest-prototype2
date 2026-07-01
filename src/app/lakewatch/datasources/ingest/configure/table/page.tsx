@@ -59,15 +59,15 @@ function TableConfigurationContent() {
     >
       <PreviewDockLayout
         header={
-          <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
-            <p className="max-w-[380px] text-sm text-foreground">
+          <div className="flex flex-nowrap items-start gap-[40px] pb-6">
+            <p className="max-w-[380px] shrink-0 text-sm text-foreground">
               Auto-configure will scan your datasource and automatically infer format, time
               column, pre-transforms, bronze table name, source and source type, and schema
               hints.
             </p>
             <SplitButton
               variant="default"
-              className="shrink-0"
+              className="shrink-0 self-start"
               disabled={status === "loading"}
               onClick={handleAutoConfigure}
             >
