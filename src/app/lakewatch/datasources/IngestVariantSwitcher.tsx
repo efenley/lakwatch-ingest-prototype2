@@ -1,0 +1,34 @@
+"use client"
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { SegmentedControl, SegmentedItem } from "@/components/ui/segmented-control"
+import {
+  getAlternateIngestPath,
+  getIngestVariant,
+  type IngestVariant,
+} from "./ingest/_shared/ingest-variant"
+
+export function IngestVariantSwitcher() {
+  const pathname = usePathname()
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const variant = getIngestVariant(pathname)
+  if (!variant) return null
+
+  const search = searchParams.toString()
+  const searchSuffix = search ? `?${search}` : ""
+
+  function switchVariant(nextVariant: IngestVariant) {
+    if (nextVariant === variant) return
+    const nextPath = getAlternateIngestPath(pathname, searchSuffix)
+    if (nextPath) router.push(nextPath)
+  }
+
+  return (
+    <SegmentedControl value={variant} onValueChange={(value) => switchVariant(value as IngestVariant)}>
+      <SegmentedItem value="option1">Option 1</SegmentedItem>
+      <SegmentedItem value="option2">Option 2</SegmentedItem>
+    </SegmentedControl>
+  )
+}
