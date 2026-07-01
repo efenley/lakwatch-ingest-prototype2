@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { SegmentedControl, SegmentedItem } from "@/components/ui/segmented-control"
 import {
-  getAlternateIngestPath,
+  getIngestPathForVariant,
   getIngestVariant,
   type IngestVariant,
 } from "./ingest/_shared/ingest-variant"
@@ -21,8 +21,7 @@ export function IngestVariantSwitcher() {
 
   function switchVariant(nextVariant: IngestVariant) {
     if (nextVariant === variant) return
-    const nextPath = getAlternateIngestPath(pathname, searchSuffix)
-    if (nextPath) router.push(nextPath)
+    router.push(getIngestPathForVariant(nextVariant, searchSuffix))
   }
 
   return (
