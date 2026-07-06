@@ -53,7 +53,7 @@ export function IngestWizardShell({
   const stepperSteps = steps ?? [...INGEST_STEPS]
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4 p-4">
+    <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4">
       <div className="flex items-center justify-between gap-4">
         <Breadcrumb>
           <BreadcrumbList>
@@ -84,7 +84,7 @@ export function IngestWizardShell({
       </div>
 
       <h1 className="text-2xl font-semibold leading-none text-foreground">
-        Ingest from an external location
+        Ingest from cloud storage
       </h1>
 
       {showTopNav ? (
@@ -108,18 +108,20 @@ export function IngestWizardShell({
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col pt-2">
-        <div className="flex min-h-0 flex-1 gap-8 overflow-hidden lg:flex-row">
-          <Stepper
-            direction="vertical"
-            currentStepIndex={currentStepIndex}
-            steps={stepperSteps}
-            className="w-full shrink-0 lg:w-[197px]"
-          />
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-2">
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="mx-auto flex w-full max-w-[845px] gap-8 lg:flex-row">
+            <Stepper
+              direction="vertical"
+              currentStepIndex={currentStepIndex}
+              steps={stepperSteps}
+              className="w-full shrink-0 lg:w-[197px]"
+            />
+            <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+          </div>
         </div>
-        {stepNav ? <div className="-mx-4 shrink-0 px-4">{stepNav}</div> : null}
-        {preview ? <div className="-mx-4 -mb-4 shrink-0">{preview}</div> : null}
+        {stepNav ? <div className="shrink-0 px-4">{stepNav}</div> : null}
+        {preview ? <div className="-mx-4 shrink-0">{preview}</div> : null}
       </div>
     </div>
   )

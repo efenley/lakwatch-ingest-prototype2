@@ -3,8 +3,8 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { SegmentedControl, SegmentedItem } from "@/components/ui/segmented-control"
 import {
-  getIngestPathForVariant,
   getIngestVariant,
+  getSwitcherTargetPath,
   type IngestVariant,
 } from "./ingest/_shared/ingest-variant"
 
@@ -13,15 +13,15 @@ export function IngestVariantSwitcher() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const variant = getIngestVariant(pathname)
-  if (!variant) return null
-
   const search = searchParams.toString()
   const searchSuffix = search ? `?${search}` : ""
 
+  const variant = getIngestVariant(pathname, searchSuffix)
+  if (!variant) return null
+
   function switchVariant(nextVariant: IngestVariant) {
     if (nextVariant === variant) return
-    router.push(getIngestPathForVariant(nextVariant, pathname, searchSuffix))
+    router.push(getSwitcherTargetPath(nextVariant, pathname, searchSuffix), { scroll: false })
   }
 
   return (

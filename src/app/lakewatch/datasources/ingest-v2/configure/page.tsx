@@ -4,8 +4,6 @@ import * as React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { DbIcon } from "@/components/ui/db-icon"
-import { SparkleFillIcon } from "@/components/icons"
 import {
   AdvancedOptionsDialog,
   type AdvancedOptionsState,
@@ -16,9 +14,16 @@ import {
   PreviewDock,
   TablePreviewPanel,
 } from "../../ingest/configure/PreviewDock"
-import { AdditionalDetailsForm } from "../../ingest/configure/details/AdditionalDetailsForm"
+import { AdditionalDetailsForm, isAdditionalDetailsValid } from "../../ingest/configure/details/AdditionalDetailsForm"
 import { TimeColumnFieldListDialog } from "../../ingest/configure/table/TimeColumnFieldListDialog"
+import {
+  AutoConfigureSplitButton,
+  areConfigureTableFieldsDisabled,
+  isConfigureTableActive,
+  type ConfigureTableStatus,
+} from "../../ingest/_shared/AutoConfigureSplitButton"
 import { INGEST_CONFIGURE_PATH } from "../../ingest/_shared/ingest-variant"
+import { buildDatasourcesListUrl } from "../../_shared/datasource-routes"
 import { IngestColumnCard, IngestColumnShell } from "../IngestColumnShell"
 import { TableConfigurationColumnForm } from "./TableConfigurationColumnForm"
 
@@ -28,7 +33,7 @@ const DEFAULT_TIME_COLUMN = "eventTime"
 const DEFAULT_FORMAT = "json"
 const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
 
-type AutoConfigureStatus = "idle" | "loading" | "complete"
+type AutoConfigureStatus = ConfigureTableStatus
 
 const DEFAULT_ADVANCED_OPTIONS: AdvancedOptionsState = {
   useManagedFileNotifications: true,
@@ -44,8 +49,12 @@ function IngestV2ConfigurePageContent() {
   const searchParams = useSearchParams()
   const selectedLocation = searchParams.get("location")?.trim() ?? ""
   const hasSelectedLocation = selectedLocation.length > 0
-  const [format, setFormat] = React.useState("")
-  const [timeColumn, setTimeColumn] = React.useState("")
+  const [format, setFormat] = React.useState(() =>
+    searchParams.get("configured") === "1" ? DEFAULT_FORMAT : "",
+  )
+  const [timeColumn, setTimeColumn] = React.useState(() =>
+    searchParams.get("configured") === "1" ? DEFAULT_TIME_COLUMN : "",
+  )
   const [fieldListOpen, setFieldListOpen] = React.useState(false)
   const [datasourceName, setDatasourceName] = React.useState("")
   const [bronzeViewName, setBronzeViewName] = React.useState("")
@@ -68,9 +77,12 @@ function IngestV2ConfigurePageContent() {
   }, [autoConfigureStatus])
 
   const isLoading = autoConfigureStatus === "loading"
-  const isConfigureComplete = autoConfigureStatus === "complete"
+  const isConfigured = isConfigureTableActive(autoConfigureStatus)
+  const fieldsDisabled = areConfigureTableFieldsDisabled(autoConfigureStatus, {
+    locationSelected: hasSelectedLocation,
+  })
 
-  const previewPanel = isConfigureComplete ? (
+  const previewPanel = autoConfigureStatus === "complete" ? (
     <TablePreviewPanel tableName={bronzeViewName.trim() || PREVIEW_TABLE_NAME} />
   ) : isLoading ? (
     <DataPreviewLoadingPanel />
@@ -84,6 +96,12 @@ function IngestV2ConfigurePageContent() {
     setAutoConfigureStatus("loading")
   }
 
+  function handleManualConfigure() {
+    setFormat("")
+    setTimeColumn("")
+    setAutoConfigureStatus("manual")
+  }
+
   function handleLocationChange(location: string) {
     const params = new URLSearchParams(searchParams.toString())
     if (location.trim()) {
@@ -93,6 +111,25 @@ function IngestV2ConfigurePageContent() {
     }
     const query = params.toString()
     router.replace(query ? `${CONFIGURE_PATH}?${query}` : CONFIGURE_PATH)
+  }
+
+  const isDetailsValid = isAdditionalDetailsValid({
+    datasourceName,
+    bronzeViewName,
+    source,
+  })
+
+  function handleCreate() {
+    router.push(
+      buildDatasourcesListUrl({
+        name: datasourceName,
+        bronzeViewName,
+        location: selectedLocation,
+        source,
+        sourceType,
+        prototype: "option2",
+      }),
+    )
   }
 
   return (
@@ -139,18 +176,12 @@ function IngestV2ConfigurePageContent() {
             active={hasSelectedLocation}
             disabled={!hasSelectedLocation}
             headerAction={
-              <Button
-                variant="default"
-                size="sm"
+              <AutoConfigureSplitButton
                 className="shrink-0"
                 disabled={!hasSelectedLocation || isLoading}
-                onClick={handleAutoConfigure}
-              >
-                <span className="flex items-center gap-2">
-                  <DbIcon icon={SparkleFillIcon} color="ai" size={16} />
-                  Auto configure
-                </span>
-              </Button>
+                onAutoConfigure={handleAutoConfigure}
+                onManualConfigure={handleManualConfigure}
+              />
             }
           >
             <p className="text-sm text-foreground">
@@ -161,7 +192,7 @@ function IngestV2ConfigurePageContent() {
               format={format}
               timeColumn={timeColumn}
               isLoading={isLoading}
-              disabled={!hasSelectedLocation}
+              disabled={fieldsDisabled}
               onFormatChange={setFormat}
               onTimeColumnChange={setTimeColumn}
               onSelectFromFieldList={() => setFieldListOpen(true)}
@@ -171,12 +202,21 @@ function IngestV2ConfigurePageContent() {
           <IngestColumnCard
             step={3}
             title="Source & table names"
-            active={isConfigureComplete}
-            disabled={!isConfigureComplete}
+            active={isConfigured}
+            disabled={!isConfigured}
+            footer={
+              <Button
+                size="sm"
+                disabled={!isConfigured || !isDetailsValid}
+                onClick={handleCreate}
+              >
+                Create
+              </Button>
+            }
           >
             <AdditionalDetailsForm
               layout="column"
-              disabled={!isConfigureComplete}
+              disabled={!isConfigured}
               datasourceName={datasourceName}
               bronzeViewName={bronzeViewName}
               source={source}

@@ -37,7 +37,7 @@ export function IngestColumnShell({
   children,
 }: IngestColumnShellProps) {
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4 p-4 pb-16">
+    <div className="flex h-full min-h-0 flex-col gap-4 p-4">
       <div className="flex items-center justify-between gap-4">
         <Breadcrumb>
           <BreadcrumbList>
@@ -68,7 +68,7 @@ export function IngestColumnShell({
       </div>
 
       <h1 className="text-2xl font-semibold leading-none text-foreground">
-        Ingest from an external location
+        Ingest from cloud storage
       </h1>
 
       {showTopNav ? (

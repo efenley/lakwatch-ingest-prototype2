@@ -44,7 +44,7 @@ const NAV_SECTIONS: NavSection[] = [
   {
     label: "Configure",
     items: [
-      { id: "datasources", label: "Datasources", icon: DatabaseIcon, href: "/lakewatch/datasources/ingest" },
+      { id: "datasources", label: "Datasources", icon: DatabaseIcon, href: "/lakewatch/datasources" },
       { id: "detection-rules", label: "Detection rules", icon: ZoomMarqueeSelection },
       { id: "transformations", label: "Transformations", icon: BranchIcon },
       { id: "workspace", label: "Workspace", icon: GearIcon },

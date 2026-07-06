@@ -156,6 +156,32 @@ export function AdvancedOptionsDialog({
         </DialogHeader>
 
         <DialogBody className="gap-6 px-6 py-0">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="ingest-range" className="text-sm font-semibold text-foreground">
+              Ingest range
+            </Label>
+            <Select
+              value={draft.ingestRange}
+              onValueChange={(next) =>
+                setDraft((current) => ({
+                  ...current,
+                  ingestRange: next,
+                }))
+              }
+            >
+              <SelectTrigger id="ingest-range" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {INGEST_RANGE_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <SwitchField
             id="managed-file-notifications"
             label="Use managed file notifications"
@@ -168,6 +194,32 @@ export function AdvancedOptionsDialog({
               }))
             }
           />
+
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="schema-hints" className="text-sm font-semibold text-foreground">
+                Schema hints
+              </Label>
+              <p className="text-hint text-muted-foreground">
+                Enter schema hints to customize how columns are mapped and typed.
+              </p>
+            </div>
+            <Textarea
+              id="schema-hints"
+              value={draft.schemaHints}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  schemaHints: event.target.value,
+                  loadAsSingleVariant:
+                    event.target.value.trim().length > 0
+                      ? false
+                      : current.loadAsSingleVariant,
+                }))
+              }
+              className="min-h-[80px]"
+            />
+          </div>
 
           <SwitchField
             id="load-as-single-variant"
@@ -239,58 +291,6 @@ export function AdvancedOptionsDialog({
             >
               <PlusIcon size={16} />
             </Button>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="schema-hints" className="text-sm font-semibold text-foreground">
-                Schema hints
-              </Label>
-              <p className="text-hint text-muted-foreground">
-                Enter schema hints to customize how columns are mapped and typed.
-              </p>
-            </div>
-            <Textarea
-              id="schema-hints"
-              value={draft.schemaHints}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  schemaHints: event.target.value,
-                  loadAsSingleVariant:
-                    event.target.value.trim().length > 0
-                      ? false
-                      : current.loadAsSingleVariant,
-                }))
-              }
-              className="min-h-[80px]"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="ingest-range" className="text-sm font-semibold text-foreground">
-              Ingest range
-            </Label>
-            <Select
-              value={draft.ingestRange}
-              onValueChange={(next) =>
-                setDraft((current) => ({
-                  ...current,
-                  ingestRange: next,
-                }))
-              }
-            >
-              <SelectTrigger id="ingest-range" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {INGEST_RANGE_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="flex flex-col gap-2">

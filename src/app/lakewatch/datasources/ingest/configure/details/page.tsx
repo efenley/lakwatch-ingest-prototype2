@@ -9,6 +9,7 @@ import {
   AdditionalDetailsForm,
   isAdditionalDetailsValid,
 } from "./AdditionalDetailsForm"
+import { buildDatasourcesListUrl } from "../../../_shared/datasource-routes"
 
 const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
 
@@ -22,7 +23,8 @@ function AdditionalDetailsContent() {
   const [source, setSource] = React.useState("")
   const [sourceType, setSourceType] = React.useState("")
 
-  const backHref = location
+  const cancelHref = "/lakewatch/datasources/ingest"
+  const previousHref = location
     ? `/lakewatch/datasources/ingest/configure/table?location=${encodeURIComponent(location)}&configured=1`
     : "/lakewatch/datasources/ingest/configure/table?configured=1"
 
@@ -39,14 +41,23 @@ function AdditionalDetailsContent() {
   })
 
   function handleFinish() {
-    router.push("/lakewatch/datasources")
+    router.push(
+      buildDatasourcesListUrl({
+        name: datasourceName,
+        bronzeViewName,
+        location,
+        source,
+        sourceType,
+        prototype: "option1",
+      }),
+    )
   }
 
   return (
     <IngestWizardShell
       currentStepIndex={2}
       steps={detailsSteps}
-      backHref={backHref}
+      backHref={previousHref}
       showTopNav={false}
       preview={
         <TablePreviewPanel
@@ -57,9 +68,9 @@ function AdditionalDetailsContent() {
       <IngestStepCard
         step={3}
         title="Additional details"
-        cancelHref={backHref}
-        backLabel="Back"
-        nextLabel="Finish"
+        cancelHref={cancelHref}
+        previousHref={previousHref}
+        nextLabel="Create"
         nextDisabled={!isValid}
         onNextClick={handleFinish}
       >

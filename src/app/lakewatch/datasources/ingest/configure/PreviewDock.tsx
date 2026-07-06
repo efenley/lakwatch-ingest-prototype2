@@ -49,7 +49,7 @@ export function DataPreviewLoadingPanel() {
   return (
     <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
       <PreviewDockHeader title="Data preview" />
-      <div className="max-h-[235px] overflow-auto bg-background">
+      <div className="max-h-[235px] overflow-auto bg-secondary">
         <Table>
           <TableHeader>
             <TableRow>
@@ -120,7 +120,7 @@ export function TablePreviewPanel({ tableName = "aws_sec_lake_bronze" }: TablePr
       <div className="flex h-8 items-center border-b border-border bg-secondary px-4">
         <span className="truncate text-sm font-semibold text-foreground">{tableName}</span>
       </div>
-      <div className="max-h-[235px] overflow-auto bg-background">
+      <div className="max-h-[235px] overflow-auto bg-secondary">
         <Table>
           <TableHeader>
             <TableRow>

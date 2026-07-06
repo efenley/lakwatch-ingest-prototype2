@@ -25,7 +25,7 @@ export default function IngestV2BrowsePage() {
   const router = useRouter()
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4 pb-16">
+    <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4">
       <div className="flex shrink-0 items-center justify-between gap-4">
         <Breadcrumb>
           <BreadcrumbList>

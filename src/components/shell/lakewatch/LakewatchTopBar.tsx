@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -14,6 +15,7 @@ import {
   MenuIcon,
 } from "@/components/icons"
 import { cn } from "@/lib/utils"
+import { INGEST_VARIANT_BASE } from "@/app/lakewatch/datasources/ingest/_shared/ingest-variant"
 import { DatabricksLogo } from "../DatabricksLogo"
 import { AppSwitcher } from "../AppSwitcher"
 
@@ -38,6 +40,13 @@ export function LakewatchTopBar({
   userInitial = "J",
   className,
 }: LakewatchTopBarProps) {
+  const pathname = usePathname()
+  const homeHref = pathname.startsWith("/lakewatch/datasources/ingest-v2")
+    ? INGEST_VARIANT_BASE.option2
+    : pathname.startsWith("/lakewatch/datasources")
+      ? "/lakewatch/datasources"
+      : INGEST_VARIANT_BASE.option1
+
   return (
     <header
       className={cn(
@@ -66,7 +75,7 @@ export function LakewatchTopBar({
             ? <SidebarOpenIcon className="h-4 w-4 text-muted-foreground" />
             : <SidebarClosedIcon className="h-4 w-4 text-muted-foreground" />}
         </Button>
-        <Link href="/lakewatch/datasources/ingest">
+        <Link href={homeHref}>
           <DatabricksLogo height={18} />
         </Link>
         <span className="text-sm text-blue-800/75">Lakewatch</span>

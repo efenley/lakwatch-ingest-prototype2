@@ -12,13 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { DbIcon } from "@/components/ui/db-icon"
 import { Spinner } from "@/components/ui/spinner"
-import { SparkleFillIcon } from "@/components/icons"
 import { cn } from "@/lib/utils"
 import { IngestStepCard } from "../IngestStepCard"
 import { IngestWizardShell } from "../IngestWizardShell"
 import { DataPreviewLoadingPanel, PreviewDock, TablePreviewPanel } from "../PreviewDock"
+import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, isConfigureTableActive, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
 import { TimeColumnFieldListDialog } from "./TimeColumnFieldListDialog"
 
 const AUTO_CONFIGURE_DURATION_MS = 2500
@@ -26,7 +25,7 @@ const DEFAULT_TIME_COLUMN = "eventTime"
 const DEFAULT_FORMAT = "json"
 const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
 
-type AutoConfigureStatus = "idle" | "loading" | "complete"
+type AutoConfigureStatus = ConfigureTableStatus
 
 function FieldSpinner({ show, className }: { show: boolean; className?: string }) {
   if (!show) return null
@@ -64,7 +63,8 @@ function TableConfigurationContent() {
     return () => window.clearTimeout(timer)
   }, [status])
 
-  const cancelHref = location
+  const cancelHref = "/lakewatch/datasources/ingest"
+  const previousHref = location
     ? `/lakewatch/datasources/ingest/configure?location=${encodeURIComponent(location)}`
     : "/lakewatch/datasources/ingest/configure"
 
@@ -75,13 +75,21 @@ function TableConfigurationContent() {
   ]
 
   const isLoading = status === "loading"
-  const fieldsDisabled = isLoading
-  const isComplete = status === "complete"
+  const isConfigured = isConfigureTableActive(status)
+  const fieldsDisabled = areConfigureTableFieldsDisabled(status)
+  const canProceed =
+    isConfigured && format.trim().length > 0 && timeColumn.trim().length > 0 && !isLoading
 
   function handleAutoConfigure() {
     setFormat("")
     setTimeColumn("")
     setStatus("loading")
+  }
+
+  function handleManualConfigure() {
+    setFormat("")
+    setTimeColumn("")
+    setStatus("manual")
   }
 
   function handleNext() {
@@ -98,7 +106,7 @@ function TableConfigurationContent() {
       backHref={cancelHref}
       showTopNav={false}
       preview={
-        isComplete ? (
+        status === "complete" ? (
           <TablePreviewPanel tableName={PREVIEW_TABLE_NAME} />
         ) : isLoading ? (
           <DataPreviewLoadingPanel />
@@ -111,8 +119,8 @@ function TableConfigurationContent() {
         step={2}
         title="Configure table"
         cancelHref={cancelHref}
-        backLabel="Back"
-        nextDisabled={!isComplete}
+        previousHref={previousHref}
+        nextDisabled={!canProceed}
         onNextClick={handleNext}
       >
         <div className="flex flex-nowrap items-start justify-between gap-4">
@@ -120,18 +128,12 @@ function TableConfigurationContent() {
             Auto-configure will scan your datasource and automatically infer format &amp; time
             column.
           </p>
-          <Button
-            variant="default"
-            size="sm"
+          <AutoConfigureSplitButton
             className="shrink-0"
-            disabled={status === "loading"}
-            onClick={handleAutoConfigure}
-          >
-            <span className="flex items-center gap-2">
-              <DbIcon icon={SparkleFillIcon} color="ai" size={16} />
-              Auto configure
-            </span>
-          </Button>
+            disabled={isLoading}
+            onAutoConfigure={handleAutoConfigure}
+            onManualConfigure={handleManualConfigure}
+          />
         </div>
 
         <div className="flex max-w-[610px] items-center gap-3">
