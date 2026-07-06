@@ -1,58 +1,79 @@
 "use client"
 
 import * as React from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
+import { IngestStepCard } from "../IngestStepCard"
 import { IngestWizardShell } from "../IngestWizardShell"
-import { PreviewDockLayout, TablePreviewPanel } from "../PreviewDock"
+import { TablePreviewPanel } from "../PreviewDock"
 import {
   AdditionalDetailsForm,
   isAdditionalDetailsValid,
 } from "./AdditionalDetailsForm"
 
-function deriveDefaultNames(location: string) {
-  const base = location.trim() || "aws_sec_lake"
-  return {
-    datasourceName: base,
-    bronzeViewName: `${base}_bronze`,
-  }
-}
+const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
 
 function AdditionalDetailsContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const location = searchParams.get("location") ?? ""
-  const defaults = React.useMemo(() => deriveDefaultNames(location), [location])
 
-  const [datasourceName, setDatasourceName] = React.useState(defaults.datasourceName)
-  const [bronzeViewName, setBronzeViewName] = React.useState(defaults.bronzeViewName)
+  const [datasourceName, setDatasourceName] = React.useState("")
+  const [bronzeViewName, setBronzeViewName] = React.useState("")
+  const [source, setSource] = React.useState("")
+  const [sourceType, setSourceType] = React.useState("")
 
   const backHref = location
     ? `/lakewatch/datasources/ingest/configure/table?location=${encodeURIComponent(location)}&configured=1`
     : "/lakewatch/datasources/ingest/configure/table?configured=1"
 
   const detailsSteps = [
-    { title: "Data location", status: "completed" as const },
-    { title: "Configure table", status: "completed" as const },
+    { title: "Location", status: "completed" as const },
+    { title: "Table configuration", status: "completed" as const },
     { title: "Additional details" },
   ]
 
-  const isValid = isAdditionalDetailsValid(datasourceName, bronzeViewName)
+  const isValid = isAdditionalDetailsValid({
+    datasourceName,
+    bronzeViewName,
+    source,
+  })
+
+  function handleFinish() {
+    router.push("/lakewatch/datasources")
+  }
 
   return (
     <IngestWizardShell
       currentStepIndex={2}
       steps={detailsSteps}
       backHref={backHref}
-      nextDisabled={!isValid}
-      preview={<TablePreviewPanel tableName={bronzeViewName.trim() || "aws_sec_lake_bronze"} />}
+      showTopNav={false}
+      preview={
+        <TablePreviewPanel
+          tableName={bronzeViewName.trim() || PREVIEW_TABLE_NAME}
+        />
+      }
     >
-      <PreviewDockLayout>
+      <IngestStepCard
+        step={3}
+        title="Additional details"
+        cancelHref={backHref}
+        backLabel="Back"
+        nextLabel="Finish"
+        nextDisabled={!isValid}
+        onNextClick={handleFinish}
+      >
         <AdditionalDetailsForm
           datasourceName={datasourceName}
           bronzeViewName={bronzeViewName}
+          source={source}
+          sourceType={sourceType}
           onDatasourceNameChange={setDatasourceName}
           onBronzeViewNameChange={setBronzeViewName}
+          onSourceChange={setSource}
+          onSourceTypeChange={setSourceType}
         />
-      </PreviewDockLayout>
+      </IngestStepCard>
     </IngestWizardShell>
   )
 }

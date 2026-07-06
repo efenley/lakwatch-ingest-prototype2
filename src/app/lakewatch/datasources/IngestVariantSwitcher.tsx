@@ -21,7 +21,7 @@ export function IngestVariantSwitcher() {
 
   function switchVariant(nextVariant: IngestVariant) {
     if (nextVariant === variant) return
-    router.push(getIngestPathForVariant(nextVariant, searchSuffix))
+    router.push(getIngestPathForVariant(nextVariant, pathname, searchSuffix))
   }
 
   return (

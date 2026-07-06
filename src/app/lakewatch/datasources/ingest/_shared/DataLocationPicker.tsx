@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/input-group"
 import { ListItem } from "@/components/ui/list-item"
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover"
-import { CheckCircleFillIcon, CatalogIcon, FolderIcon, SchemaIcon } from "@/components/icons"
+import { CheckCircleFillIcon, FolderIcon } from "@/components/icons"
 import { cn } from "@/lib/utils"
-import { CATALOG_LOCATIONS } from "./catalog-locations"
+import { DATA_LOCATIONS } from "./catalog-locations"
 
 interface DataLocationPickerProps {
   value: string
@@ -47,7 +47,7 @@ export function DataLocationPicker({
               aria-label="Data location"
               aria-expanded={open}
               aria-haspopup="listbox"
-              placeholder="catalog.schema.table"
+              placeholder="s3://bucket/path/"
               value={value}
               readOnly={readOnly}
               onChange={
@@ -60,7 +60,7 @@ export function DataLocationPicker({
             <InputGroupAddon align="inline-end">
               <InputGroupButton
                 size="icon-xs"
-                aria-label="Browse catalog"
+                aria-label="Browse locations"
                 onClick={openPicker}
               >
                 <FolderIcon size={16} className="text-muted-foreground" />
@@ -72,27 +72,16 @@ export function DataLocationPicker({
           align="start"
           className="w-[var(--radix-popover-trigger-width)] p-2"
         >
-          <p className="px-2 pb-2 text-hint text-muted-foreground">
-            Browse Unity Catalog to choose a table or view.
-          </p>
           <div className="flex flex-col gap-1" role="listbox">
-            {CATALOG_LOCATIONS.map((item) => (
+            {DATA_LOCATIONS.map((item) => (
               <ListItem
                 key={item.id}
-                selected={value === item.label}
-                icon={
-                  item.type === "catalog" ? (
-                    <CatalogIcon size={16} className="text-muted-foreground" />
-                  ) : (
-                    <SchemaIcon size={16} className="text-muted-foreground" />
-                  )
-                }
-                onClick={() => selectLocation(item.label)}
+                selected={value === item.path}
+                onClick={() => selectLocation(item.path)}
               >
-                <span className="text-sm text-foreground">{item.label}</span>
-                {item.path && (
-                  <span className="block text-hint text-muted-foreground">{item.path}</span>
-                )}
+                <span className="truncate text-sm text-foreground" title={item.path}>
+                  {item.path}
+                </span>
               </ListItem>
             ))}
           </div>

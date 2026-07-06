@@ -22,6 +22,8 @@ import { cn } from "@/lib/utils"
 interface IngestColumnShellProps {
   backHref?: string
   nextDisabled?: boolean
+  showTopNav?: boolean
+  stepNav?: React.ReactNode
   preview?: React.ReactNode
   children: React.ReactNode
 }
@@ -29,6 +31,8 @@ interface IngestColumnShellProps {
 export function IngestColumnShell({
   backHref = "/lakewatch/datasources/ingest",
   nextDisabled = true,
+  showTopNav = true,
+  stepNav,
   preview,
   children,
 }: IngestColumnShellProps) {
@@ -67,18 +71,21 @@ export function IngestColumnShell({
         Ingest from an external location
       </h1>
 
-      <div className="flex items-center justify-between border-b border-border py-2">
-        <Button variant="default" size="sm" asChild>
-          <Link href={backHref}>Back</Link>
-        </Button>
-        <Button size="sm" disabled={nextDisabled}>
-          Next
-          <ChevronRightIcon size={16} />
-        </Button>
-      </div>
+      {showTopNav ? (
+        <div className="flex items-center justify-between border-b border-border py-2">
+          <Button variant="default" size="sm" asChild>
+            <Link href={backHref}>Back</Link>
+          </Button>
+          <Button size="sm" disabled={nextDisabled}>
+            Next
+            <ChevronRightIcon size={16} />
+          </Button>
+        </div>
+      ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col pt-2">
         <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+        {stepNav ? <div className="-mx-4 shrink-0 px-4">{stepNav}</div> : null}
         {preview ? <div className="-mx-4 shrink-0">{preview}</div> : null}
       </div>
     </div>
@@ -91,6 +98,7 @@ interface IngestColumnCardProps {
   active?: boolean
   disabled?: boolean
   headerAction?: React.ReactNode
+  footer?: React.ReactNode
   className?: string
   children: React.ReactNode
 }
@@ -101,6 +109,7 @@ export function IngestColumnCard({
   active = false,
   disabled = false,
   headerAction,
+  footer,
   className,
   children,
 }: IngestColumnCardProps) {
@@ -124,6 +133,7 @@ export function IngestColumnCard({
         {headerAction}
       </div>
       <div className="flex min-h-0 flex-1 flex-col gap-4">{children}</div>
+      {footer ? <div className="mt-auto shrink-0 pt-4">{footer}</div> : null}
     </div>
   )
 }

@@ -18,8 +18,8 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { CatalogIcon, ChevronRightIcon, SchemaIcon } from "@/components/icons"
-import { CATALOG_LOCATIONS } from "../../ingest/_shared/catalog-locations"
+import { ChevronRightIcon } from "@/components/icons"
+import { DATA_LOCATIONS } from "../../ingest/_shared/catalog-locations"
 
 export default function IngestV2BrowsePage() {
   const router = useRouter()
@@ -61,7 +61,7 @@ export default function IngestV2BrowsePage() {
 
       <div className="flex items-center justify-between border-b border-border py-2">
         <Button variant="default" size="sm" asChild>
-          <Link href="/lakewatch/datasources/ingest-v2">Back</Link>
+          <Link href="/lakewatch/datasources/ingest-v2/configure">Back</Link>
         </Button>
         <Button size="sm" disabled>
           Next
@@ -70,31 +70,19 @@ export default function IngestV2BrowsePage() {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pt-2">
-        <p className="text-hint text-muted-foreground">
-          Browse Unity Catalog to choose a table or view.
-        </p>
-
         <div className="flex flex-col gap-1 rounded-md border border-border p-2">
-          {CATALOG_LOCATIONS.map((item) => (
+          {DATA_LOCATIONS.map((item) => (
             <ListItem
               key={item.id}
-              icon={
-                item.type === "catalog" ? (
-                  <CatalogIcon size={16} className="text-muted-foreground" />
-                ) : (
-                  <SchemaIcon size={16} className="text-muted-foreground" />
-                )
-              }
               onClick={() =>
                 router.push(
-                  `/lakewatch/datasources/ingest-v2?location=${encodeURIComponent(item.label)}`,
+                  `/lakewatch/datasources/ingest-v2/configure?location=${encodeURIComponent(item.path)}`,
                 )
               }
             >
-              <span className="text-sm text-foreground">{item.label}</span>
-              {item.path ? (
-                <span className="block text-hint text-muted-foreground">{item.path}</span>
-              ) : null}
+              <span className="truncate text-sm text-foreground" title={item.path}>
+                {item.path}
+              </span>
             </ListItem>
           ))}
         </div>

@@ -8,13 +8,17 @@ import {
   type AdvancedOptionsState,
 } from "./AdvancedOptionsDialog"
 import { DataLocationPicker } from "../_shared/DataLocationPicker"
+import { IngestStepCard } from "./IngestStepCard"
 import { IngestWizardShell } from "./IngestWizardShell"
-import { PreviewDockLayout, PreviewDock } from "./PreviewDock"
+import { PreviewDock } from "./PreviewDock"
 
 const DEFAULT_ADVANCED_OPTIONS: AdvancedOptionsState = {
-  performanceTarget: "global-default",
-  notebookLocation: "",
-  enableSilverPreTransform: false,
+  useManagedFileNotifications: true,
+  loadAsSingleVariant: false,
+  preTransforms: [""],
+  schemaHints: "",
+  ingestRange: "all-data",
+  runAs: "beau.trincia@databricks.com",
 }
 
 function ConfigurePageContent() {
@@ -31,7 +35,7 @@ function ConfigurePageContent() {
 
   const hasValidLocation = dataLocation.trim().length > 0
 
-  function handleApply() {
+  function handleNext() {
     router.push(
       `/lakewatch/datasources/ingest/configure/table?location=${encodeURIComponent(dataLocation.trim())}`,
     )
@@ -42,38 +46,35 @@ function ConfigurePageContent() {
       <IngestWizardShell
         currentStepIndex={0}
         backHref="/lakewatch/datasources/ingest"
-        nextDisabled
+        showTopNav={false}
         preview={<PreviewDock />}
       >
-        <PreviewDockLayout
-          header={
-            <div className="flex max-w-[480px] flex-col gap-1 pb-4">
-              <span className="text-sm font-semibold text-foreground">Data location</span>
-              <p className="text-hint text-muted-foreground">
-                A Unity Catalog table or view to expose through the Lakewatch bronze view.
-                Enter a fully qualified name in the format catalog.schema.table.
-              </p>
-            </div>
-          }
+        <IngestStepCard
+          step={1}
+          title="Location"
+          cancelHref="/lakewatch/datasources/ingest"
+          nextDisabled={!hasValidLocation}
+          onNextClick={handleNext}
         >
-          <div className="flex max-w-[480px] flex-col gap-4">
-            <DataLocationPicker value={dataLocation} onValueChange={setDataLocation} />
-
-            <div className="flex items-center justify-end gap-4">
-              <Button
-                variant="link"
-                size="sm"
-                className="h-8 px-0"
-                onClick={() => setAdvancedOpen(true)}
-              >
-                Advanced options
-              </Button>
-              <Button size="sm" disabled={!hasValidLocation} onClick={handleApply}>
-                Apply
-              </Button>
-            </div>
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-semibold text-foreground">Data location</span>
+            <p className="text-hint text-muted-foreground">
+              A Unity Catalog table or view to expose through the Lakewatch bronze view.
+              Enter a fully qualified name in the format catalog.schema.table.
+            </p>
           </div>
-        </PreviewDockLayout>
+
+          <DataLocationPicker value={dataLocation} onValueChange={setDataLocation} />
+
+          <Button
+            variant="link"
+            size="sm"
+            className="h-8 w-fit px-0"
+            onClick={() => setAdvancedOpen(true)}
+          >
+            Advanced options
+          </Button>
+        </IngestStepCard>
       </IngestWizardShell>
 
       <AdvancedOptionsDialog

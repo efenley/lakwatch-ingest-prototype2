@@ -1,4 +1,4 @@
-import { TableIcon, ChevronDownIcon, CloseIcon } from "@/components/icons"
+import { TableIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -9,12 +9,73 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+function PreviewDockHeader({ title }: { title: string }) {
+  return (
+    <div className="flex h-8 items-center justify-between border-b border-border bg-secondary px-2">
+      <span className="px-2 text-sm font-semibold text-foreground">{title}</span>
+      <div className="flex items-center">
+        <Button variant="ghost" size="icon-xs" aria-label="Collapse preview">
+          <ChevronDownIcon size={16} className="text-muted-foreground" />
+        </Button>
+        <Button variant="ghost" size="icon-xs" aria-label="Close preview">
+          <CloseIcon size={16} className="text-muted-foreground" />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export function PreviewDock() {
   return (
-    <div className="w-full shrink-0 border-t border-border bg-background px-4 pt-8 pb-4 shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <div className="flex flex-col items-center gap-3 py-4">
+    <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
+      <PreviewDockHeader title="Data preview" />
+      <div className="flex flex-col items-center gap-3 bg-secondary py-6">
         <TableIcon size={36} className="text-muted-foreground" />
         <p className="text-sm text-foreground">Configure a table to see a preview</p>
+      </div>
+    </div>
+  )
+}
+
+const LOADING_PREVIEW_ROWS = [
+  `"time": "2025-02-24T05:52:00.000Z", "data": {"awsRegion": "ap-northeast-1", "eventCategory": "Management" "eventID": "86774789-fa34-4c3f-a2d3-c76ac2dea86f","eventName": DescribeInstanceStatus",`,
+  `"time": "2025-02-24T05:51:59.000Z", "data": {"awsRegion": "ap-northeast-1", "eventCategory": "Management", "eventID": "f54af1b7-40f5-426a-955f-8619a14963f2", "eventName": "DescribeInstances",`,
+  `"time": "2025-02-24T05:51:59.000Z", "data": {"awsRegion": "ap-northeast-1", "eventCategory": "Management", "eventID": "f54af1b7-40f5-426a-955f-8619a14963f2", "eventName": "DescribeInstances",`,
+  `"time": "2025-02-24T05:52:00.000Z", "data": {"awsRegion": "ap-northeast-1", "eventCategory": "Management" "eventID": "86774789-fa34-4c3f-a2d3-c76ac2dea86f","eventName": DescribeInstanceStatus",`,
+  `"time": "2025-02-24T05:52:01.000Z", "data": {"awsRegion": "us-east-1", "eventCategory": "Management", "eventID": "a12bc3d4-e5f6-7890-abcd-ef1234567890", "eventName": "RunInstances",`,
+] as const
+
+export function DataPreviewLoadingPanel() {
+  return (
+    <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
+      <PreviewDockHeader title="Data preview" />
+      <div className="max-h-[235px] overflow-auto bg-background">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8 p-0" />
+              <TableHead className="font-semibold text-foreground">data</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {LOADING_PREVIEW_ROWS.map((row, index) => (
+              <TableRow key={index}>
+                <TableCell className="w-8 p-0">
+                  <Button
+                    variant="ghost"
+                    size="icon-xs"
+                    className="h-8 w-8"
+                    disabled
+                    aria-label="Expand row"
+                  >
+                    <ChevronRightIcon size={16} className="text-muted-foreground" />
+                  </Button>
+                </TableCell>
+                <TableCell className="max-w-0 truncate text-foreground">{row}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   )
@@ -55,16 +116,9 @@ interface TablePreviewPanelProps {
 export function TablePreviewPanel({ tableName = "aws_sec_lake_bronze" }: TablePreviewPanelProps) {
   return (
     <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <div className="flex h-8 items-center justify-between border-b border-border bg-secondary px-2">
-        <span className="truncate px-2 text-sm font-semibold text-foreground">{tableName}</span>
-        <div className="flex items-center">
-          <Button variant="ghost" size="icon-xs" aria-label="Collapse preview">
-            <ChevronDownIcon size={16} className="text-muted-foreground" />
-          </Button>
-          <Button variant="ghost" size="icon-xs" aria-label="Close preview">
-            <CloseIcon size={16} className="text-muted-foreground" />
-          </Button>
-        </div>
+      <PreviewDockHeader title="Data preview" />
+      <div className="flex h-8 items-center border-b border-border bg-secondary px-4">
+        <span className="truncate text-sm font-semibold text-foreground">{tableName}</span>
       </div>
       <div className="max-h-[235px] overflow-auto bg-background">
         <Table>

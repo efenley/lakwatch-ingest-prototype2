@@ -20,8 +20,8 @@ import { Stepper, type Step } from "@/components/ui/stepper"
 import { ChevronRightIcon } from "@/components/icons"
 
 export const INGEST_STEPS = [
-  { title: "Data location" },
-  { title: "Configure table" },
+  { title: "Location" },
+  { title: "Table configuration" },
   { title: "Additional details" },
 ] as const
 
@@ -32,6 +32,8 @@ interface IngestWizardShellProps {
   nextDisabled?: boolean
   nextHref?: string
   onNextClick?: () => void
+  showTopNav?: boolean
+  stepNav?: React.ReactNode
   preview?: React.ReactNode
   children: React.ReactNode
 }
@@ -43,6 +45,8 @@ export function IngestWizardShell({
   nextDisabled = true,
   nextHref,
   onNextClick,
+  showTopNav = true,
+  stepNav,
   preview,
   children,
 }: IngestWizardShellProps) {
@@ -83,24 +87,26 @@ export function IngestWizardShell({
         Ingest from an external location
       </h1>
 
-      <div className="flex items-center justify-between border-b border-border py-2">
-        <Button variant="default" size="sm" asChild>
-          <Link href={backHref}>Back</Link>
-        </Button>
-        {nextHref && !nextDisabled ? (
-          <Button size="sm" asChild>
-            <Link href={nextHref}>
+      {showTopNav ? (
+        <div className="flex items-center justify-between border-b border-border py-2">
+          <Button variant="default" size="sm" asChild>
+            <Link href={backHref}>Back</Link>
+          </Button>
+          {nextHref && !nextDisabled ? (
+            <Button size="sm" asChild>
+              <Link href={nextHref}>
+                Next
+                <ChevronRightIcon size={16} />
+              </Link>
+            </Button>
+          ) : (
+            <Button size="sm" disabled={nextDisabled} onClick={onNextClick}>
               Next
               <ChevronRightIcon size={16} />
-            </Link>
-          </Button>
-        ) : (
-          <Button size="sm" disabled={nextDisabled} onClick={onNextClick}>
-            Next
-            <ChevronRightIcon size={16} />
-          </Button>
-        )}
-      </div>
+            </Button>
+          )}
+        </div>
+      ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col pt-2">
         <div className="flex min-h-0 flex-1 gap-8 overflow-hidden lg:flex-row">
@@ -112,6 +118,7 @@ export function IngestWizardShell({
           />
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">{children}</div>
         </div>
+        {stepNav ? <div className="-mx-4 shrink-0 px-4">{stepNav}</div> : null}
         {preview ? <div className="-mx-4 -mb-4 shrink-0">{preview}</div> : null}
       </div>
     </div>

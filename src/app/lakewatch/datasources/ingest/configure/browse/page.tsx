@@ -18,8 +18,8 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { CatalogIcon, ChevronRightIcon, SchemaIcon } from "@/components/icons"
-import { CATALOG_LOCATIONS } from "../../_shared/catalog-locations"
+import { ChevronRightIcon } from "@/components/icons"
+import { DATA_LOCATIONS } from "../../_shared/catalog-locations"
 
 export default function BrowsePage() {
   const router = useRouter()
@@ -76,31 +76,19 @@ export default function BrowsePage() {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pt-2">
-        <p className="text-hint text-muted-foreground">
-          Browse Unity Catalog to choose a table or view.
-        </p>
-
         <div className="flex flex-col gap-1 rounded-md border border-border p-2">
-          {CATALOG_LOCATIONS.map((item) => (
+          {DATA_LOCATIONS.map((item) => (
             <ListItem
               key={item.id}
-              icon={
-                item.type === "catalog" ? (
-                  <CatalogIcon size={16} className="text-muted-foreground" />
-                ) : (
-                  <SchemaIcon size={16} className="text-muted-foreground" />
-                )
-              }
               onClick={() =>
                 router.push(
-                  `/lakewatch/datasources/ingest/configure?location=${encodeURIComponent(item.label)}`,
+                  `/lakewatch/datasources/ingest/configure?location=${encodeURIComponent(item.path)}`,
                 )
               }
             >
-              <span className="text-sm text-foreground">{item.label}</span>
-              {"path" in item && item.path ? (
-                <span className="block text-hint text-muted-foreground">{item.path}</span>
-              ) : null}
+              <span className="truncate text-sm text-foreground" title={item.path}>
+                {item.path}
+              </span>
             </ListItem>
           ))}
         </div>
