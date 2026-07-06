@@ -7,10 +7,10 @@ export default function DatasourcesLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
       <div className="min-h-0 flex-1 overflow-hidden">{children}</div>
-      <div className="shrink-0 px-4 pb-4 pt-2">
-        <div className="inline-flex rounded border border-border bg-background p-1 shadow-[var(--shadow-db-sm)]">
+      <div className="pointer-events-none absolute bottom-4 left-4 z-20">
+        <div className="pointer-events-auto inline-flex rounded border border-border bg-background p-1 shadow-[var(--shadow-db-sm)]">
           <React.Suspense fallback={null}>
             <IngestVariantSwitcher />
           </React.Suspense>

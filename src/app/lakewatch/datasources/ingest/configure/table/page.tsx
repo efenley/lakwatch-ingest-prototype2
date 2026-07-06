@@ -16,7 +16,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 import { IngestStepCard } from "../IngestStepCard"
 import { IngestWizardShell } from "../IngestWizardShell"
-import { DataPreviewLoadingPanel, PreviewDock, TablePreviewPanel } from "../PreviewDock"
+import { ConfigurePreviewPanel } from "../../_shared/ConfigurePreviewPanel"
 import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, isConfigureTableActive, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
 import { TimeColumnFieldListDialog } from "./TimeColumnFieldListDialog"
 
@@ -77,6 +77,7 @@ function TableConfigurationContent() {
   const isLoading = status === "loading"
   const isConfigured = isConfigureTableActive(status)
   const fieldsDisabled = areConfigureTableFieldsDisabled(status)
+  const hasLocation = location.trim().length > 0
   const canProceed =
     isConfigured && format.trim().length > 0 && timeColumn.trim().length > 0 && !isLoading
 
@@ -106,13 +107,12 @@ function TableConfigurationContent() {
       backHref={cancelHref}
       showTopNav={false}
       preview={
-        status === "complete" ? (
-          <TablePreviewPanel tableName={PREVIEW_TABLE_NAME} />
-        ) : isLoading ? (
-          <DataPreviewLoadingPanel />
-        ) : (
-          <PreviewDock />
-        )
+        <ConfigurePreviewPanel
+          hasLocation={hasLocation}
+          autoConfigureStatus={status}
+          tableName={PREVIEW_TABLE_NAME}
+          carryLocationPreview
+        />
       }
     >
       <IngestStepCard

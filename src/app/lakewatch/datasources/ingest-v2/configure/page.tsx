@@ -9,11 +9,7 @@ import {
   type AdvancedOptionsState,
 } from "../../ingest/configure/AdvancedOptionsDialog"
 import { DataLocationPicker } from "../../ingest/_shared/DataLocationPicker"
-import {
-  DataPreviewLoadingPanel,
-  PreviewDock,
-  TablePreviewPanel,
-} from "../../ingest/configure/PreviewDock"
+import { ConfigurePreviewPanel } from "../../ingest/_shared/ConfigurePreviewPanel"
 import { AdditionalDetailsForm, isAdditionalDetailsValid } from "../../ingest/configure/details/AdditionalDetailsForm"
 import { TimeColumnFieldListDialog } from "../../ingest/configure/table/TimeColumnFieldListDialog"
 import {
@@ -82,12 +78,12 @@ function IngestV2ConfigurePageContent() {
     locationSelected: hasSelectedLocation,
   })
 
-  const previewPanel = autoConfigureStatus === "complete" ? (
-    <TablePreviewPanel tableName={bronzeViewName.trim() || PREVIEW_TABLE_NAME} />
-  ) : isLoading ? (
-    <DataPreviewLoadingPanel />
-  ) : (
-    <PreviewDock />
+  const previewPanel = (
+    <ConfigurePreviewPanel
+      hasLocation={hasSelectedLocation}
+      autoConfigureStatus={autoConfigureStatus}
+      tableName={bronzeViewName.trim() || PREVIEW_TABLE_NAME}
+    />
   )
 
   function handleAutoConfigure() {

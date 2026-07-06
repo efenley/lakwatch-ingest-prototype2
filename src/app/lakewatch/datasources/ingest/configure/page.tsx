@@ -8,9 +8,9 @@ import {
   type AdvancedOptionsState,
 } from "./AdvancedOptionsDialog"
 import { DataLocationPicker } from "../_shared/DataLocationPicker"
+import { ConfigurePreviewPanel } from "../_shared/ConfigurePreviewPanel"
 import { IngestStepCard } from "./IngestStepCard"
 import { IngestWizardShell } from "./IngestWizardShell"
-import { PreviewDock } from "./PreviewDock"
 
 const DEFAULT_ADVANCED_OPTIONS: AdvancedOptionsState = {
   useManagedFileNotifications: true,
@@ -47,7 +47,7 @@ function ConfigurePageContent() {
         currentStepIndex={0}
         backHref="/lakewatch/datasources/ingest"
         showTopNav={false}
-        preview={<PreviewDock />}
+        preview={<ConfigurePreviewPanel hasLocation={hasValidLocation} />}
       >
         <IngestStepCard
           step={1}

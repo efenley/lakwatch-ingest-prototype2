@@ -1,5 +1,6 @@
 import { TableIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon } from "@/components/icons"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import {
   Table,
   TableBody,
@@ -32,6 +33,18 @@ export function PreviewDock() {
       <div className="flex flex-col items-center gap-3 bg-secondary py-6">
         <TableIcon size={36} className="text-muted-foreground" />
         <p className="text-sm text-foreground">Configure a table to see a preview</p>
+      </div>
+    </div>
+  )
+}
+
+export function PreviewDockLoading() {
+  return (
+    <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
+      <PreviewDockHeader title="Data preview" />
+      <div className="flex flex-col items-center gap-3 bg-secondary py-6">
+        <Spinner size="small" className="text-muted-foreground" aria-label="Loading data preview" />
+        <p className="text-sm text-foreground">Loading preview…</p>
       </div>
     </div>
   )
@@ -116,10 +129,7 @@ interface TablePreviewPanelProps {
 export function TablePreviewPanel({ tableName = "aws_sec_lake_bronze" }: TablePreviewPanelProps) {
   return (
     <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <PreviewDockHeader title="Data preview" />
-      <div className="flex h-8 items-center border-b border-border bg-secondary px-4">
-        <span className="truncate text-sm font-semibold text-foreground">{tableName}</span>
-      </div>
+      <PreviewDockHeader title={tableName} />
       <div className="max-h-[235px] overflow-auto bg-secondary">
         <Table>
           <TableHeader>
