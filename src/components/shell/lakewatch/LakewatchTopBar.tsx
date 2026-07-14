@@ -15,7 +15,7 @@ import {
   MenuIcon,
 } from "@/components/icons"
 import { cn } from "@/lib/utils"
-import { INGEST_VARIANT_BASE } from "@/app/lakewatch/datasources/ingest/_shared/ingest-variant"
+import { INGEST_PATH } from "@/app/lakewatch/datasources/ingest/_shared/ingest-routes"
 import { DatabricksLogo } from "../DatabricksLogo"
 import { AppSwitcher } from "../AppSwitcher"
 
@@ -41,11 +41,9 @@ export function LakewatchTopBar({
   className,
 }: LakewatchTopBarProps) {
   const pathname = usePathname()
-  const homeHref = pathname.startsWith("/lakewatch/datasources/ingest-v2")
-    ? INGEST_VARIANT_BASE.option2
-    : pathname.startsWith("/lakewatch/datasources")
-      ? "/lakewatch/datasources"
-      : INGEST_VARIANT_BASE.option1
+  const homeHref = pathname.startsWith("/lakewatch/datasources")
+    ? "/lakewatch/datasources"
+    : INGEST_PATH
 
   return (
     <header

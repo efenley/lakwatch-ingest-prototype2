@@ -17,8 +17,10 @@ import { cn } from "@/lib/utils"
 import { IngestStepCard } from "../IngestStepCard"
 import { IngestWizardShell } from "../IngestWizardShell"
 import { ConfigurePreviewPanel } from "../../_shared/ConfigurePreviewPanel"
+import { buildIngestWizardSteps } from "../../_shared/ingest-step-navigation"
 import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, isConfigureTableActive, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
 import { TimeColumnFieldListDialog } from "./TimeColumnFieldListDialog"
+import { PreTransformsField } from "./PreTransformsField"
 
 const AUTO_CONFIGURE_DURATION_MS = 2500
 const DEFAULT_TIME_COLUMN = "eventTime"
@@ -52,6 +54,7 @@ function TableConfigurationContent() {
     searchParams.get("configured") === "1" ? DEFAULT_TIME_COLUMN : "",
   )
   const [fieldListOpen, setFieldListOpen] = React.useState(false)
+  const [preTransforms, setPreTransforms] = React.useState<string[]>([])
 
   React.useEffect(() => {
     if (status !== "loading") return
@@ -68,18 +71,18 @@ function TableConfigurationContent() {
     ? `/lakewatch/datasources/ingest/configure?location=${encodeURIComponent(location)}`
     : "/lakewatch/datasources/ingest/configure"
 
-  const tableSteps = [
-    { title: "Location", status: "completed" as const },
-    { title: "Table configuration" },
-    { title: "Additional details" },
-  ]
-
   const isLoading = status === "loading"
   const isConfigured = isConfigureTableActive(status)
   const fieldsDisabled = areConfigureTableFieldsDisabled(status)
   const hasLocation = location.trim().length > 0
   const canProceed =
     isConfigured && format.trim().length > 0 && timeColumn.trim().length > 0 && !isLoading
+
+  const wizardSteps = buildIngestWizardSteps({
+    currentStepIndex: 1,
+    location,
+    tableConfigured: canProceed,
+  })
 
   function handleAutoConfigure() {
     setFormat("")
@@ -103,7 +106,7 @@ function TableConfigurationContent() {
     <>
       <IngestWizardShell
       currentStepIndex={1}
-      steps={tableSteps}
+      steps={wizardSteps}
       backHref={cancelHref}
       showTopNav={false}
       preview={
@@ -156,6 +159,12 @@ function TableConfigurationContent() {
           </div>
           <FieldSpinner show={isLoading} />
         </div>
+
+        <PreTransformsField
+          value={preTransforms}
+          onChange={setPreTransforms}
+          disabled={fieldsDisabled}
+        />
 
         <div className="flex max-w-[610px] items-end gap-3">
           <div className="flex min-w-0 flex-1 items-end justify-between gap-4">

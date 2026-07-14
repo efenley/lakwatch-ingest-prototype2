@@ -53,9 +53,8 @@ export function DataLocationPicker({
               onChange={
                 readOnly ? undefined : (event) => onValueChange(event.target.value)
               }
-              onClick={openPicker}
               onFocus={openPicker}
-              className="cursor-pointer"
+              className={cn(readOnly && "cursor-pointer")}
             />
             <InputGroupAddon align="inline-end">
               <InputGroupButton

@@ -9,16 +9,15 @@ import {
 } from "./AdvancedOptionsDialog"
 import { DataLocationPicker } from "../_shared/DataLocationPicker"
 import { ConfigurePreviewPanel } from "../_shared/ConfigurePreviewPanel"
+import { buildIngestWizardSteps } from "../_shared/ingest-step-navigation"
 import { IngestStepCard } from "./IngestStepCard"
 import { IngestWizardShell } from "./IngestWizardShell"
 
 const DEFAULT_ADVANCED_OPTIONS: AdvancedOptionsState = {
   useManagedFileNotifications: true,
   loadAsSingleVariant: false,
-  preTransforms: [""],
   schemaHints: "",
   ingestRange: "all-data",
-  runAs: "beau.trincia@databricks.com",
 }
 
 function ConfigurePageContent() {
@@ -34,17 +33,23 @@ function ConfigurePageContent() {
   }, [searchParams])
 
   const hasValidLocation = dataLocation.trim().length > 0
+  const tableStepHref = hasValidLocation
+    ? `/lakewatch/datasources/ingest/configure/table?location=${encodeURIComponent(dataLocation.trim())}`
+    : undefined
 
   function handleNext() {
-    router.push(
-      `/lakewatch/datasources/ingest/configure/table?location=${encodeURIComponent(dataLocation.trim())}`,
-    )
+    if (!tableStepHref) return
+    router.push(tableStepHref)
   }
 
   return (
     <>
       <IngestWizardShell
         currentStepIndex={0}
+        steps={buildIngestWizardSteps({
+          currentStepIndex: 0,
+          location: dataLocation,
+        })}
         backHref="/lakewatch/datasources/ingest"
         showTopNav={false}
         preview={<ConfigurePreviewPanel hasLocation={hasValidLocation} />}
@@ -54,6 +59,7 @@ function ConfigurePageContent() {
           title="Location"
           cancelHref="/lakewatch/datasources/ingest"
           nextDisabled={!hasValidLocation}
+          nextHref={tableStepHref}
           onNextClick={handleNext}
         >
           <div className="flex flex-col gap-1">

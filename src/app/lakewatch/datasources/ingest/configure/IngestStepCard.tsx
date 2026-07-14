@@ -35,17 +35,20 @@ export function IngestStepCard({
   children,
 }: IngestStepCardProps) {
   return (
-    <div className="flex min-h-[514px] min-w-0 w-full flex-col rounded-md border border-border">
-      <div className="shrink-0 bg-secondary px-6 pb-4 pt-5">
-        <p className="text-sm font-semibold text-foreground">STEP {step}</p>
-        <h2 className="text-lg font-semibold leading-6 text-foreground">{title}</h2>
+    <div className="flex h-fit max-h-full w-full min-h-0 flex-col rounded-md border border-border">
+      <div className="shrink-0 bg-secondary px-6 py-4">
+        <h2 className="text-lg font-semibold leading-6 text-foreground">
+          STEP {step}: {title}
+        </h2>
       </div>
 
-      <div className="flex flex-col bg-background px-6 pb-6 pt-4">
-        <div className="flex flex-col gap-4">{children}</div>
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background px-6 pt-4">
+        <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+          <div className="flex flex-col gap-4">{children}</div>
+        </div>
 
         {!hideFooter && cancelHref ? (
-          <div className="flex shrink-0 items-center justify-between pt-6">
+          <div className="flex shrink-0 items-center justify-between border-t border-border pb-6 pt-4">
             <Button variant="link" size="sm" className="h-8 px-3" asChild>
               <Link href={cancelHref}>{cancelLabel}</Link>
             </Button>

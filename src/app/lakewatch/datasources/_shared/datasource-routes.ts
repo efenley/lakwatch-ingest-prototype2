@@ -1,6 +1,3 @@
-import type { IngestVariant } from "../ingest/_shared/ingest-variant"
-import { PROTOTYPE_QUERY_KEY, parseIngestVariant } from "../ingest/_shared/ingest-variant"
-
 export const DATASOURCES_LIST_PATH = "/lakewatch/datasources"
 
 export interface CreatedDatasourceParams {
@@ -9,7 +6,6 @@ export interface CreatedDatasourceParams {
   location: string
   source?: string
   sourceType?: string
-  prototype?: IngestVariant
 }
 
 export function buildDatasourcesListUrl(params: CreatedDatasourceParams) {
@@ -18,7 +14,6 @@ export function buildDatasourcesListUrl(params: CreatedDatasourceParams) {
     name: params.name.trim(),
     bronzeViewName: params.bronzeViewName.trim(),
     location: params.location.trim(),
-    [PROTOTYPE_QUERY_KEY]: params.prototype ?? "option1",
   })
   if (params.source?.trim()) search.set("source", params.source.trim())
   if (params.sourceType?.trim()) search.set("sourceType", params.sourceType.trim())
@@ -37,6 +32,5 @@ export function parseCreatedDatasourceParams(
     location: searchParams.get("location")?.trim() || "aws_sec_lake",
     source: searchParams.get("source")?.trim() || undefined,
     sourceType: searchParams.get("sourceType")?.trim() || undefined,
-    prototype: parseIngestVariant(searchParams),
   }
 }

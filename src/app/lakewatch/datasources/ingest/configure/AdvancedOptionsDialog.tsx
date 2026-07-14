@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -21,15 +20,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ArrowDownIcon, ArrowUpIcon, PlusIcon, TrashIcon } from "@/components/icons"
 
 export interface AdvancedOptionsState {
   useManagedFileNotifications: boolean
   loadAsSingleVariant: boolean
-  preTransforms: string[]
   schemaHints: string
   ingestRange: string
-  runAs: string
 }
 
 interface AdvancedOptionsDialogProps {
@@ -40,13 +36,6 @@ interface AdvancedOptionsDialogProps {
 }
 
 const INGEST_RANGE_OPTIONS = [{ value: "all-data", label: "All data" }] as const
-
-const RUN_AS_OPTIONS = [
-  {
-    value: "beau.trincia@databricks.com",
-    label: "Run datasource as: beau.trincia@databricks.com",
-  },
-] as const
 
 function SwitchField({
   id,
@@ -94,45 +83,6 @@ export function AdvancedOptionsDialog({
   }, [open, value])
 
   const hasSchemaHints = draft.schemaHints.trim().length > 0
-
-  function updatePreTransform(index: number, nextValue: string) {
-    setDraft((current) => ({
-      ...current,
-      preTransforms: current.preTransforms.map((item, itemIndex) =>
-        itemIndex === index ? nextValue : item,
-      ),
-    }))
-  }
-
-  function addPreTransform() {
-    setDraft((current) => ({
-      ...current,
-      preTransforms: [...current.preTransforms, ""],
-    }))
-  }
-
-  function removePreTransform(index: number) {
-    setDraft((current) => ({
-      ...current,
-      preTransforms:
-        current.preTransforms.length === 1
-          ? [""]
-          : current.preTransforms.filter((_, itemIndex) => itemIndex !== index),
-    }))
-  }
-
-  function movePreTransform(index: number, direction: -1 | 1) {
-    setDraft((current) => {
-      const nextIndex = index + direction
-      if (nextIndex < 0 || nextIndex >= current.preTransforms.length) return current
-
-      const nextItems = [...current.preTransforms]
-      const [moved] = nextItems.splice(index, 1)
-      nextItems.splice(nextIndex, 0, moved)
-
-      return { ...current, preTransforms: nextItems }
-    })
-  }
 
   function handleCancel() {
     onOpenChange(false)
@@ -235,89 +185,6 @@ export function AdvancedOptionsDialog({
             }
           />
 
-          <div className="flex flex-col gap-2">
-            <Label className="text-sm font-semibold text-foreground">Pre-transforms</Label>
-            <div className="flex flex-col gap-2">
-              {draft.preTransforms.map((item, index) => (
-                <div key={index} className="flex items-end gap-4">
-                  <Input
-                    aria-label={`Pre-transform ${index + 1}`}
-                    placeholder="Add refinements...."
-                    value={item}
-                    onChange={(event) => updatePreTransform(index, event.target.value)}
-                    className="min-w-0 flex-1"
-                  />
-                  <div className="flex shrink-0 items-center gap-4 pb-2">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-xs"
-                      aria-label="Move pre-transform up"
-                      disabled={index === 0}
-                      onClick={() => movePreTransform(index, -1)}
-                    >
-                      <ArrowUpIcon size={16} className="text-muted-foreground" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-xs"
-                      aria-label="Move pre-transform down"
-                      disabled={index === draft.preTransforms.length - 1}
-                      onClick={() => movePreTransform(index, 1)}
-                    >
-                      <ArrowDownIcon size={16} className="text-muted-foreground" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-xs"
-                      aria-label="Remove pre-transform"
-                      onClick={() => removePreTransform(index)}
-                    >
-                      <TrashIcon size={16} className="text-muted-foreground" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Button
-              type="button"
-              variant="default"
-              size="icon-sm"
-              className="w-fit"
-              aria-label="Add pre-transform"
-              onClick={addPreTransform}
-            >
-              <PlusIcon size={16} />
-            </Button>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="run-as" className="text-sm font-semibold text-foreground">
-              Run as
-            </Label>
-            <Select
-              value={draft.runAs}
-              onValueChange={(next) =>
-                setDraft((current) => ({
-                  ...current,
-                  runAs: next,
-                }))
-              }
-            >
-              <SelectTrigger id="run-as" className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {RUN_AS_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
         </DialogBody>
 
         <DialogFooter className="gap-2 px-6 pb-6 pt-4">

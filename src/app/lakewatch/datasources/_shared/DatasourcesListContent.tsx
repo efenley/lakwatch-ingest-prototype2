@@ -27,11 +27,7 @@ import {
   PlusIcon,
   RunningIcon,
 } from "@/components/icons"
-import {
-  INGEST_VARIANT_BASE,
-  parseIngestVariant,
-  PROTOTYPE_QUERY_KEY,
-} from "../ingest/_shared/ingest-variant"
+import { INGEST_PATH } from "../ingest/_shared/ingest-routes"
 import { DatasourceDetailPanel } from "./DatasourceDetailPanel"
 import {
   DATASOURCES_LIST_PATH,
@@ -59,8 +55,7 @@ export function DatasourcesListContent() {
   const searchParams = useSearchParams()
   const createdDatasource = parseCreatedDatasourceParams(searchParams)
   const activeDatasource = createdDatasource ?? DEFAULT_DATASOURCE
-  const activePrototype = parseIngestVariant(searchParams)
-  const ingestHref = INGEST_VARIANT_BASE[activePrototype]
+  const ingestHref = INGEST_PATH
 
   const [searchQuery, setSearchQuery] = React.useState(activeDatasource.name)
   const [detailOpen, setDetailOpen] = React.useState(createdDatasource !== null)
@@ -75,9 +70,7 @@ export function DatasourcesListContent() {
   function handleCloseDetail() {
     setDetailOpen(false)
     if (searchParams.get("created") === "1") {
-      const params = new URLSearchParams()
-      params.set(PROTOTYPE_QUERY_KEY, activePrototype)
-      router.replace(`${DATASOURCES_LIST_PATH}?${params.toString()}`)
+      router.replace(DATASOURCES_LIST_PATH)
     }
   }
 

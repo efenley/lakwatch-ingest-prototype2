@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { CheckIcon, DangerIcon, WarningIcon, LoadingIcon } from "@/components/icons"
 import { cn } from "@/lib/utils"
 
@@ -15,6 +16,8 @@ export interface Step {
   title: React.ReactNode
   description?: React.ReactNode
   status?: StepStatus
+  href?: string
+  disabled?: boolean
 }
 
 export interface StepperProps {
@@ -110,22 +113,16 @@ export function Stepper({
         const isLast = index === steps.length - 1
         const style = getStepStyle(step.status, isCurrent)
         const isCompleted = step.status === "completed"
+        const isNavigable = Boolean(step.href && !step.disabled && !isCurrent)
 
-        return (
-          <li
-            key={index}
-            aria-current={isCurrent ? "step" : undefined}
-            className={cn(
-              isHorizontal ? (isLast ? "flex-none" : "flex-1") : "w-full"
-            )}
-          >
-            {/* Grid layout — horizontal: [icon, title, divider] / vertical: [icon, title] */}
+        const stepContent = (
             <div
               className={cn(
                 "grid items-center gap-x-2 w-full",
                 isHorizontal
                   ? "grid-cols-[32px_max-content_1fr] grid-rows-[32px_auto]"
-                  : "grid-cols-[32px_1fr] gap-y-1"
+                  : "grid-cols-[32px_1fr] gap-y-1",
+                isNavigable && "cursor-pointer rounded px-1 -mx-1 hover:bg-muted-foreground/10"
               )}
             >
               {/* Icon circle — 32px, full radius */}
@@ -180,6 +177,27 @@ export function Stepper({
                 />
               )}
             </div>
+        )
+
+        return (
+          <li
+            key={index}
+            aria-current={isCurrent ? "step" : undefined}
+            className={cn(
+              isHorizontal ? (isLast ? "flex-none" : "flex-1") : "w-full"
+            )}
+          >
+            {isNavigable ? (
+              <Link
+                href={step.href!}
+                className="block w-full text-inherit no-underline"
+                aria-label={`Go to step ${index + 1}: ${step.title}`}
+              >
+                {stepContent}
+              </Link>
+            ) : (
+              stepContent
+            )}
           </li>
         )
       })}

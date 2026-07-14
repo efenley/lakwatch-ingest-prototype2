@@ -141,6 +141,7 @@ export { DataIcon } from "./DataIcon";
 export { DatabaseClockIcon } from "./DatabaseClockIcon";
 export { DatabaseIcon } from "./DatabaseIcon";
 export { DatabaseImportIcon } from "./DatabaseImportIcon";
+export { DatabaseOutlineIcon } from "./DatabaseOutlineIcon";
 export { DecimalIcon } from "./DecimalIcon";
 export { DeprecatedIcon } from "./DeprecatedIcon";
 export { DeprecatedSmallIcon } from "./DeprecatedSmallIcon";

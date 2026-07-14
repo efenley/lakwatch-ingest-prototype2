@@ -1,4 +1,7 @@
-import { TableIcon, ChevronDownIcon, ChevronRightIcon, CloseIcon } from "@/components/icons"
+"use client"
+
+import * as React from "react"
+import { TableIcon, ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, CloseIcon } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -10,13 +13,41 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-function PreviewDockHeader({ title }: { title: string }) {
+const PREVIEW_DOCK_SHELL_CLASS =
+  "flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]"
+
+const PREVIEW_TABLE_BODY_CLASS =
+  "max-h-[235px] w-full overflow-auto bg-secondary [&_[data-slot=table-container]]:w-full [&_[data-slot=table-container]]:p-0 [&_[data-slot=table-row]]:h-6 [&_[data-slot=table-head]]:h-6 [&_[data-slot=table-head]]:py-0 [&_[data-slot=table-cell]]:h-6 [&_[data-slot=table-cell]]:py-0"
+
+interface PreviewDockHeaderProps {
+  title: string
+  collapsed: boolean
+  onToggleCollapse: () => void
+}
+
+function PreviewDockHeader({ title, collapsed, onToggleCollapse }: PreviewDockHeaderProps) {
   return (
-    <div className="flex h-8 items-center justify-between border-b border-border bg-secondary px-2">
+    <div
+      className={
+        collapsed
+          ? "flex h-8 items-center justify-between bg-secondary px-2"
+          : "flex h-8 items-center justify-between border-b border-border bg-secondary px-2"
+      }
+    >
       <span className="px-2 text-sm font-semibold text-foreground">{title}</span>
       <div className="flex items-center">
-        <Button variant="ghost" size="icon-xs" aria-label="Collapse preview">
-          <ChevronDownIcon size={16} className="text-muted-foreground" />
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={collapsed ? "Expand preview" : "Collapse preview"}
+          aria-expanded={!collapsed}
+          onClick={onToggleCollapse}
+        >
+          {collapsed ? (
+            <ChevronUpIcon size={16} className="text-muted-foreground" />
+          ) : (
+            <ChevronDownIcon size={16} className="text-muted-foreground" />
+          )}
         </Button>
         <Button variant="ghost" size="icon-xs" aria-label="Close preview">
           <CloseIcon size={16} className="text-muted-foreground" />
@@ -26,27 +57,45 @@ function PreviewDockHeader({ title }: { title: string }) {
   )
 }
 
+interface PreviewDockShellProps {
+  title: string
+  children: React.ReactNode
+}
+
+function PreviewDockShell({ title, children }: PreviewDockShellProps) {
+  const [collapsed, setCollapsed] = React.useState(false)
+
+  return (
+    <div className={PREVIEW_DOCK_SHELL_CLASS}>
+      <PreviewDockHeader
+        title={title}
+        collapsed={collapsed}
+        onToggleCollapse={() => setCollapsed((value) => !value)}
+      />
+      {!collapsed ? children : null}
+    </div>
+  )
+}
+
 export function PreviewDock() {
   return (
-    <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <PreviewDockHeader title="Data preview" />
+    <PreviewDockShell title="Data preview">
       <div className="flex flex-col items-center gap-3 bg-secondary py-6">
         <TableIcon size={36} className="text-muted-foreground" />
         <p className="text-sm text-foreground">Configure a table to see a preview</p>
       </div>
-    </div>
+    </PreviewDockShell>
   )
 }
 
 export function PreviewDockLoading() {
   return (
-    <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <PreviewDockHeader title="Data preview" />
+    <PreviewDockShell title="Data preview">
       <div className="flex flex-col items-center gap-3 bg-secondary py-6">
         <Spinner size="small" className="text-muted-foreground" aria-label="Loading data preview" />
         <p className="text-sm text-foreground">Loading preview…</p>
       </div>
-    </div>
+    </PreviewDockShell>
   )
 }
 
@@ -60,24 +109,23 @@ const LOADING_PREVIEW_ROWS = [
 
 export function DataPreviewLoadingPanel() {
   return (
-    <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <PreviewDockHeader title="Data preview" />
-      <div className="max-h-[235px] overflow-auto bg-secondary">
+    <PreviewDockShell title="Data preview">
+      <div className={PREVIEW_TABLE_BODY_CLASS}>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-8 p-0" />
+              <TableHead className="w-6 p-0" />
               <TableHead className="font-semibold text-foreground">data</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {LOADING_PREVIEW_ROWS.map((row, index) => (
               <TableRow key={index}>
-                <TableCell className="w-8 p-0">
+                <TableCell className="w-6 p-0">
                   <Button
                     variant="ghost"
                     size="icon-xs"
-                    className="h-8 w-8"
+                    className="size-6"
                     disabled
                     aria-label="Expand row"
                   >
@@ -90,7 +138,7 @@ export function DataPreviewLoadingPanel() {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </PreviewDockShell>
   )
 }
 
@@ -128,9 +176,8 @@ interface TablePreviewPanelProps {
 
 export function TablePreviewPanel({ tableName = "aws_sec_lake_bronze" }: TablePreviewPanelProps) {
   return (
-    <div className="flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]">
-      <PreviewDockHeader title={tableName} />
-      <div className="max-h-[235px] overflow-auto bg-secondary">
+    <PreviewDockShell title={tableName}>
+      <div className={PREVIEW_TABLE_BODY_CLASS}>
         <Table>
           <TableHeader>
             <TableRow>
@@ -150,7 +197,7 @@ export function TablePreviewPanel({ tableName = "aws_sec_lake_bronze" }: TablePr
           </TableBody>
         </Table>
       </div>
-    </div>
+    </PreviewDockShell>
   )
 }
 

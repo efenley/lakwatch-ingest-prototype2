@@ -53,8 +53,9 @@ export function IngestWizardShell({
   const stepperSteps = steps ?? [...INGEST_STEPS]
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4 pb-0">
+        <div className="flex items-center justify-between gap-4">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -109,20 +110,21 @@ export function IngestWizardShell({
       ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-2">
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto flex w-full max-w-[845px] gap-8 lg:flex-row">
-            <Stepper
-              direction="vertical"
-              currentStepIndex={currentStepIndex}
-              steps={stepperSteps}
-              className="w-full shrink-0 lg:w-[197px]"
-            />
-            <div className="flex min-w-0 flex-1 flex-col">{children}</div>
+        <div className="mx-auto flex min-h-0 w-full max-w-[845px] flex-1 gap-8 overflow-hidden lg:flex-row lg:items-start">
+          <Stepper
+            direction="vertical"
+            currentStepIndex={currentStepIndex}
+            steps={stepperSteps}
+            className="w-full shrink-0 self-start lg:w-[197px]"
+          />
+          <div className="flex min-h-0 max-h-full min-w-0 flex-1 flex-col justify-start overflow-hidden">
+            {children}
           </div>
         </div>
-        {stepNav ? <div className="shrink-0 px-4">{stepNav}</div> : null}
-        {preview ? <div className="-mx-4 shrink-0">{preview}</div> : null}
+        {stepNav ? <div className="shrink-0">{stepNav}</div> : null}
       </div>
+      </div>
+      {preview ? <div className="shrink-0">{preview}</div> : null}
     </div>
   )
 }
