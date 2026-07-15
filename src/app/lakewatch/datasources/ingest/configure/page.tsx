@@ -10,6 +10,7 @@ import {
 import { DataLocationPicker } from "../_shared/DataLocationPicker"
 import { ConfigurePreviewPanel } from "../_shared/ConfigurePreviewPanel"
 import { buildIngestWizardSteps } from "../_shared/ingest-step-navigation"
+import { useIngestRoutes } from "../../_shared/ingest-route-context"
 import { IngestStepCard } from "./IngestStepCard"
 import { IngestWizardShell } from "./IngestWizardShell"
 
@@ -23,6 +24,7 @@ const DEFAULT_ADVANCED_OPTIONS: AdvancedOptionsState = {
 function ConfigurePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { ingestPath, configurePath } = useIngestRoutes()
   const [dataLocation, setDataLocation] = React.useState("")
   const [advancedOpen, setAdvancedOpen] = React.useState(false)
   const [advancedOptions, setAdvancedOptions] = React.useState(DEFAULT_ADVANCED_OPTIONS)
@@ -34,7 +36,7 @@ function ConfigurePageContent() {
 
   const hasValidLocation = dataLocation.trim().length > 0
   const tableStepHref = hasValidLocation
-    ? `/lakewatch/datasources/ingest/configure/table?location=${encodeURIComponent(dataLocation.trim())}`
+    ? `${configurePath}/table?location=${encodeURIComponent(dataLocation.trim())}`
     : undefined
 
   function handleNext() {
@@ -47,17 +49,18 @@ function ConfigurePageContent() {
       <IngestWizardShell
         currentStepIndex={0}
         steps={buildIngestWizardSteps({
+          configurePath,
           currentStepIndex: 0,
           location: dataLocation,
         })}
-        backHref="/lakewatch/datasources/ingest"
+        backHref={ingestPath}
         showTopNav={false}
         preview={<ConfigurePreviewPanel hasLocation={hasValidLocation} />}
       >
         <IngestStepCard
           step={1}
           title="Location"
-          cancelHref="/lakewatch/datasources/ingest"
+          cancelHref={ingestPath}
           nextDisabled={!hasValidLocation}
           nextHref={tableStepHref}
           onNextClick={handleNext}
@@ -95,8 +98,12 @@ function ConfigurePageContent() {
 
 export default function ConfigurePage() {
   return (
-    <React.Suspense fallback={null}>
-      <ConfigurePageContent />
-    </React.Suspense>
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <React.Suspense
+        fallback={<div className="p-4 text-sm text-muted-foreground">Loading step…</div>}
+      >
+        <ConfigurePageContent />
+      </React.Suspense>
+    </div>
   )
 }

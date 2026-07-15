@@ -11,6 +11,7 @@ import {
   isAdditionalDetailsValid,
 } from "./AdditionalDetailsForm"
 import { buildIngestWizardSteps } from "../../_shared/ingest-step-navigation"
+import { useIngestRoutes } from "../../../_shared/ingest-route-context"
 import { buildDatasourcesListUrl } from "../../../_shared/datasource-routes"
 
 const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
@@ -18,6 +19,7 @@ const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
 function AdditionalDetailsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { ingestPath, configurePath } = useIngestRoutes()
   const location = searchParams.get("location") ?? ""
 
   const [datasourceCatalog, setDatasourceCatalog] = React.useState("staging")
@@ -28,12 +30,13 @@ function AdditionalDetailsContent() {
   const [sourceType, setSourceType] = React.useState("")
   const [runAs, setRunAs] = React.useState("beau.trincia@databricks.com")
 
-  const cancelHref = "/lakewatch/datasources/ingest"
+  const cancelHref = ingestPath
   const previousHref = location
-    ? `/lakewatch/datasources/ingest/configure/table?location=${encodeURIComponent(location)}&configured=1`
-    : "/lakewatch/datasources/ingest/configure/table?configured=1"
+    ? `${configurePath}/table?location=${encodeURIComponent(location)}&configured=1`
+    : `${configurePath}/table?configured=1`
 
   const detailsSteps = buildIngestWizardSteps({
+    configurePath,
     currentStepIndex: 2,
     location,
     tableConfigured: true,
@@ -105,8 +108,12 @@ function AdditionalDetailsContent() {
 
 export default function AdditionalDetailsPage() {
   return (
-    <React.Suspense fallback={null}>
-      <AdditionalDetailsContent />
-    </React.Suspense>
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <React.Suspense
+        fallback={<div className="p-4 text-sm text-muted-foreground">Loading step…</div>}
+      >
+        <AdditionalDetailsContent />
+      </React.Suspense>
+    </div>
   )
 }

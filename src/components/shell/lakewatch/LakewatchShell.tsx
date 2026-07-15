@@ -62,7 +62,7 @@ export function LakewatchShell({
 
         <main
           className={cn(
-            "mb-1 flex-1 overflow-y-auto rounded-md border border-border bg-background shadow-[var(--shadow-db-sm)]",
+            "mb-1 flex min-h-0 flex-1 flex-col overflow-hidden rounded-md border border-border bg-background shadow-[var(--shadow-db-sm)]",
             genieOpen ? "mr-0.5" : "mr-0",
             !sidebarOpen && "ml-0.5",
             mainClassName,

@@ -18,6 +18,12 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Stepper, type Step } from "@/components/ui/stepper"
 import { ChevronRightIcon } from "@/components/icons"
+import {
+  IngestPreviewPortal,
+  ingestPreviewContentClass,
+} from "../../_shared/IngestPreviewDock"
+import { useIngestRoutes } from "../../_shared/ingest-route-context"
+import { cn } from "@/lib/utils"
 
 export const INGEST_STEPS = [
   { title: "Location" },
@@ -51,22 +57,29 @@ export function IngestWizardShell({
   children,
 }: IngestWizardShellProps) {
   const stepperSteps = steps ?? [...INGEST_STEPS]
+  const { ingestPath } = useIngestRoutes()
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden">
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4 pb-0">
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <IngestPreviewPortal preview={preview} />
+      <div
+        className={cn(
+          "flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 pb-0",
+          ingestPreviewContentClass(Boolean(preview)),
+        )}
+      >
         <div className="flex min-w-0 items-center justify-between gap-4">
         <Breadcrumb className="min-w-0">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/lakewatch/datasources/ingest">Current datasources</Link>
+                <Link href={ingestPath}>Current datasources</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/lakewatch/datasources/ingest">Ingest</Link>
+                <Link href={ingestPath}>Ingest</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -109,7 +122,7 @@ export function IngestWizardShell({
         </div>
       ) : null}
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pt-2">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col pt-2">
         <div className="mx-auto flex min-h-0 w-full min-w-0 max-w-[960px] flex-1 gap-6 overflow-x-hidden lg:flex-row lg:items-start lg:gap-8">
           <div className="min-w-0 shrink-0 self-start lg:w-[220px]">
             <Stepper
@@ -119,14 +132,11 @@ export function IngestWizardShell({
               className="w-full"
             />
           </div>
-          <div className="flex min-h-0 max-h-full min-w-0 flex-1 flex-col justify-start overflow-hidden">
-            {children}
-          </div>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">{children}</div>
         </div>
         {stepNav ? <div className="shrink-0">{stepNav}</div> : null}
       </div>
       </div>
-      {preview ? <div className="shrink-0">{preview}</div> : null}
     </div>
   )
 }

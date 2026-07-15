@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table"
 
 const PREVIEW_DOCK_SHELL_CLASS =
-  "flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]"
+  "relative z-10 flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]"
 
 const PREVIEW_TABLE_BODY_CLASS =
   "max-h-[235px] w-full overflow-auto bg-secondary [&_[data-slot=table-container]]:w-full [&_[data-slot=table-container]]:p-0 [&_[data-slot=table-row]]:h-6 [&_[data-slot=table-head]]:h-6 [&_[data-slot=table-head]]:py-0 [&_[data-slot=table-cell]]:h-6 [&_[data-slot=table-cell]]:py-0"

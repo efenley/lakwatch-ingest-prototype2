@@ -20,9 +20,11 @@ import {
 } from "@/components/ui/breadcrumb"
 import { ChevronRightIcon } from "@/components/icons"
 import { DATA_LOCATIONS } from "../../_shared/catalog-locations"
+import { useIngestRoutes } from "../../../_shared/ingest-route-context"
 
 export default function BrowsePage() {
   const router = useRouter()
+  const { ingestPath, configurePath } = useIngestRoutes()
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4">
@@ -31,19 +33,19 @@ export default function BrowsePage() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/lakewatch/datasources/ingest">Current datasources</Link>
+                <Link href={ingestPath}>Current datasources</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/lakewatch/datasources/ingest">Ingest</Link>
+                <Link href={ingestPath}>Ingest</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/lakewatch/datasources/ingest/configure">Configure</Link>
+                <Link href={configurePath}>Configure</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -67,7 +69,7 @@ export default function BrowsePage() {
 
       <div className="flex items-center justify-between border-b border-border py-2">
         <Button variant="default" size="sm" asChild>
-          <Link href="/lakewatch/datasources/ingest/configure">Back</Link>
+          <Link href={configurePath}>Back</Link>
         </Button>
         <Button size="sm" disabled>
           Next
@@ -82,7 +84,7 @@ export default function BrowsePage() {
               key={item.id}
               onClick={() =>
                 router.push(
-                  `/lakewatch/datasources/ingest/configure?location=${encodeURIComponent(item.path)}`,
+                  `${configurePath}?location=${encodeURIComponent(item.path)}`,
                 )
               }
             >

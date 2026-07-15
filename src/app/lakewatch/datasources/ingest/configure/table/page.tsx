@@ -18,6 +18,7 @@ import { IngestStepCard } from "../IngestStepCard"
 import { IngestWizardShell } from "../IngestWizardShell"
 import { ConfigurePreviewPanel } from "../../_shared/ConfigurePreviewPanel"
 import { buildIngestWizardSteps } from "../../_shared/ingest-step-navigation"
+import { useIngestRoutes } from "../../../_shared/ingest-route-context"
 import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, isConfigureTableActive, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
 import { TimeColumnFieldListDialog } from "./TimeColumnFieldListDialog"
 import { PreTransformsField } from "./PreTransformsField"
@@ -43,6 +44,7 @@ function FieldSpinner({ show, className }: { show: boolean; className?: string }
 function TableConfigurationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { ingestPath, configurePath } = useIngestRoutes()
   const location = searchParams.get("location") ?? ""
   const [status, setStatus] = React.useState<AutoConfigureStatus>(() =>
     searchParams.get("configured") === "1" ? "complete" : "idle",
@@ -66,10 +68,10 @@ function TableConfigurationContent() {
     return () => window.clearTimeout(timer)
   }, [status])
 
-  const cancelHref = "/lakewatch/datasources/ingest"
+  const cancelHref = ingestPath
   const previousHref = location
-    ? `/lakewatch/datasources/ingest/configure?location=${encodeURIComponent(location)}`
-    : "/lakewatch/datasources/ingest/configure"
+    ? `${configurePath}?location=${encodeURIComponent(location)}`
+    : configurePath
 
   const isLoading = status === "loading"
   const isConfigured = isConfigureTableActive(status)
@@ -79,6 +81,7 @@ function TableConfigurationContent() {
     isConfigured && format.trim().length > 0 && timeColumn.trim().length > 0 && !isLoading
 
   const wizardSteps = buildIngestWizardSteps({
+    configurePath,
     currentStepIndex: 1,
     location,
     tableConfigured: canProceed,
@@ -99,7 +102,7 @@ function TableConfigurationContent() {
   function handleNext() {
     const params = new URLSearchParams()
     if (location) params.set("location", location)
-    router.push(`/lakewatch/datasources/ingest/configure/details?${params.toString()}`)
+    router.push(`${configurePath}/details?${params.toString()}`)
   }
 
   return (
@@ -210,8 +213,12 @@ function TableConfigurationContent() {
 
 export default function TableConfigurationPage() {
   return (
-    <React.Suspense fallback={null}>
-      <TableConfigurationContent />
-    </React.Suspense>
+    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <React.Suspense
+        fallback={<div className="p-4 text-sm text-muted-foreground">Loading step…</div>}
+      >
+        <TableConfigurationContent />
+      </React.Suspense>
+    </div>
   )
 }
