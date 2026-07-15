@@ -39,10 +39,10 @@ export function DataLocationPicker({
   }
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex w-full min-w-0 items-center gap-2", className)}>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverAnchor asChild>
-          <InputGroup className="h-8 flex-1 rounded shadow-xs">
+          <InputGroup className="h-8 min-w-0 flex-1 rounded shadow-xs">
             <InputGroupInput
               aria-label="Data location"
               aria-expanded={open}

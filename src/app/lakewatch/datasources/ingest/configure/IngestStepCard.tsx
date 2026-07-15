@@ -35,7 +35,7 @@ export function IngestStepCard({
   children,
 }: IngestStepCardProps) {
   return (
-    <div className="flex h-fit max-h-full w-full min-h-0 flex-col rounded-md border border-border">
+    <div className="flex h-fit max-h-full w-full min-h-0 min-w-0 flex-col rounded-md border border-border">
       <div className="shrink-0 bg-secondary px-6 py-4">
         <h2 className="text-lg font-semibold leading-6 text-foreground">
           STEP {step}: {title}
@@ -43,8 +43,8 @@ export function IngestStepCard({
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-background px-6 pt-4">
-        <div className="min-h-0 flex-1 overflow-y-auto pb-4">
-          <div className="flex flex-col gap-4">{children}</div>
+        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto pb-4">
+          <div className="flex min-w-0 flex-col gap-4">{children}</div>
         </div>
 
         {!hideFooter && cancelHref ? (

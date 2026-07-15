@@ -104,7 +104,7 @@ export function Stepper({
       className={cn(
         "flex m-0 p-0 list-none w-full",
         // DuBois: gap-2 (8px) horizontal, gap-1 (4px) vertical
-        isHorizontal ? "flex-row flex-wrap items-start gap-2" : "flex-col items-start gap-1",
+        isHorizontal ? "flex-row flex-wrap items-start gap-2" : "flex-col items-start gap-1 min-w-0 overflow-x-hidden overflow-y-hidden",
         className
       )}
     >
@@ -118,11 +118,13 @@ export function Stepper({
         const stepContent = (
             <div
               className={cn(
-                "grid items-center gap-x-2 w-full",
+                "grid w-full min-w-0 items-center gap-x-2",
                 isHorizontal
                   ? "grid-cols-[32px_max-content_1fr] grid-rows-[32px_auto]"
-                  : "grid-cols-[32px_1fr] gap-y-1",
-                isNavigable && "cursor-pointer rounded px-1 -mx-1 hover:bg-muted-foreground/10"
+                  : "grid-cols-[32px_minmax(0,1fr)] gap-y-1",
+                isNavigable &&
+                  "cursor-pointer rounded px-1 hover:bg-muted-foreground/10",
+                isNavigable && isHorizontal && "-mx-1",
               )}
             >
               {/* Icon circle — 32px, full radius */}
@@ -140,7 +142,13 @@ export function Stepper({
               </div>
 
               {/* Title */}
-              <span className={cn("text-sm whitespace-nowrap", style.titleColor)}>
+              <span
+                className={cn(
+                  "text-sm min-w-0",
+                  isHorizontal ? "whitespace-nowrap" : "break-words",
+                  style.titleColor,
+                )}
+              >
                 {step.title}
               </span>
 
@@ -171,7 +179,7 @@ export function Stepper({
               {!isHorizontal && !isLast && (
                 <div
                   className={cn(
-                    "w-px min-h-6 self-start ml-4 col-start-1",
+                    "col-start-1 w-px min-h-6 justify-self-center self-start",
                     isCompleted ? "bg-primary" : "bg-border"
                   )}
                 />
@@ -184,7 +192,7 @@ export function Stepper({
             key={index}
             aria-current={isCurrent ? "step" : undefined}
             className={cn(
-              isHorizontal ? (isLast ? "flex-none" : "flex-1") : "w-full"
+              isHorizontal ? (isLast ? "flex-none" : "flex-1") : "w-full min-w-0",
             )}
           >
             {isNavigable ? (

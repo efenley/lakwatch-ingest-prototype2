@@ -55,8 +55,8 @@ export function IngestWizardShell({
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden">
       <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4 pb-0">
-        <div className="flex items-center justify-between gap-4">
-        <Breadcrumb>
+        <div className="flex min-w-0 items-center justify-between gap-4">
+        <Breadcrumb className="min-w-0">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
@@ -109,14 +109,16 @@ export function IngestWizardShell({
         </div>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden pt-2">
-        <div className="mx-auto flex min-h-0 w-full max-w-[845px] flex-1 gap-8 overflow-hidden lg:flex-row lg:items-start">
-          <Stepper
-            direction="vertical"
-            currentStepIndex={currentStepIndex}
-            steps={stepperSteps}
-            className="w-full shrink-0 self-start lg:w-[197px]"
-          />
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden pt-2">
+        <div className="mx-auto flex min-h-0 w-full min-w-0 max-w-[960px] flex-1 gap-6 overflow-x-hidden lg:flex-row lg:items-start lg:gap-8">
+          <div className="min-w-0 shrink-0 self-start lg:w-[220px]">
+            <Stepper
+              direction="vertical"
+              currentStepIndex={currentStepIndex}
+              steps={stepperSteps}
+              className="w-full"
+            />
+          </div>
           <div className="flex min-h-0 max-h-full min-w-0 flex-1 flex-col justify-start overflow-hidden">
             {children}
           </div>
