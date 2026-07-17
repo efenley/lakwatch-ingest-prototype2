@@ -16,8 +16,6 @@ import { IngestWizardShell } from "./IngestWizardShell"
 
 const DEFAULT_ADVANCED_OPTIONS: AdvancedOptionsState = {
   useManagedFileNotifications: true,
-  loadAsSingleVariant: false,
-  schemaHints: "",
   ingestRange: "all-data",
 }
 

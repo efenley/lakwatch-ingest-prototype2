@@ -14,14 +14,18 @@ import { cn } from "@/lib/utils"
 interface AutoConfigureSplitButtonProps {
   disabled?: boolean
   onAutoConfigure: () => void
+  onConfigureWithPreset?: () => void
   onManualConfigure: () => void
+  showConfigureWithPreset?: boolean
   className?: string
 }
 
 export function AutoConfigureSplitButton({
   disabled,
   onAutoConfigure,
+  onConfigureWithPreset,
   onManualConfigure,
+  showConfigureWithPreset = true,
   className,
 }: AutoConfigureSplitButtonProps) {
   return (
@@ -58,6 +62,11 @@ export function AutoConfigureSplitButton({
         </DropdownMenuTrigger>
       </div>
       <DropdownMenuContent align="end">
+        {showConfigureWithPreset ? (
+          <DropdownMenuItem onClick={onConfigureWithPreset}>
+            Configure with preset
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuItem onClick={onManualConfigure}>Manual configure</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

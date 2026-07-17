@@ -11,7 +11,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
 import {
   Dialog,
   DialogBody,
@@ -23,8 +22,6 @@ import {
 
 export interface AdvancedOptionsState {
   useManagedFileNotifications: boolean
-  loadAsSingleVariant: boolean
-  schemaHints: string
   ingestRange: string
 }
 
@@ -82,17 +79,12 @@ export function AdvancedOptionsDialog({
     if (open) setDraft(value)
   }, [open, value])
 
-  const hasSchemaHints = draft.schemaHints.trim().length > 0
-
   function handleCancel() {
     onOpenChange(false)
   }
 
   function handleDone() {
-    onSave({
-      ...draft,
-      loadAsSingleVariant: hasSchemaHints ? false : draft.loadAsSingleVariant,
-    })
+    onSave(draft)
     onOpenChange(false)
   }
 
@@ -141,46 +133,6 @@ export function AdvancedOptionsDialog({
               setDraft((current) => ({
                 ...current,
                 useManagedFileNotifications: checked,
-              }))
-            }
-          />
-
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="schema-hints" className="text-sm font-semibold text-foreground">
-                Schema hints
-              </Label>
-              <p className="text-hint text-muted-foreground">
-                Enter schema hints to customize how columns are mapped and typed.
-              </p>
-            </div>
-            <Textarea
-              id="schema-hints"
-              value={draft.schemaHints}
-              onChange={(event) =>
-                setDraft((current) => ({
-                  ...current,
-                  schemaHints: event.target.value,
-                  loadAsSingleVariant:
-                    event.target.value.trim().length > 0
-                      ? false
-                      : current.loadAsSingleVariant,
-                }))
-              }
-              className="min-h-[80px]"
-            />
-          </div>
-
-          <SwitchField
-            id="load-as-single-variant"
-            label="Load as single variant"
-            hint="When enabled, all data is stored in a single variant column. Automatically disabled when schema hints are provided."
-            checked={draft.loadAsSingleVariant}
-            disabled={hasSchemaHints}
-            onCheckedChange={(checked) =>
-              setDraft((current) => ({
-                ...current,
-                loadAsSingleVariant: checked,
               }))
             }
           />

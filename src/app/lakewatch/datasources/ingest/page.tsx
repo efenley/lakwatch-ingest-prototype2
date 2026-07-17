@@ -1,5 +1,5 @@
 import { IngestSourceSelection } from "./_shared/IngestSourceSelection"
-import { INGEST_ROUTES_OPTION1 } from "../_shared/ingest-route-context"
+import { INGEST_ROUTES_OPTION1 } from "../_shared/ingest-route-constants"
 
 export default function IngestPage() {
   return (

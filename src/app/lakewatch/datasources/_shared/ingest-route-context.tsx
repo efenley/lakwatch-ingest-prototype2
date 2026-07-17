@@ -1,29 +1,22 @@
 "use client"
 
 import * as React from "react"
+import {
+  INGEST_ROUTES_OPTION1,
+  INGEST_ROUTES_OPTION2,
+  type IngestRoutePaths,
+} from "./ingest-route-constants"
 
-export interface IngestRoutes {
-  ingestPath: string
-  configurePath: string
-}
+export type { IngestRoutePaths as IngestRoutes }
+export { INGEST_ROUTES_OPTION1, INGEST_ROUTES_OPTION2 }
 
-export const INGEST_ROUTES_OPTION1: IngestRoutes = {
-  ingestPath: "/lakewatch/datasources/ingest",
-  configurePath: "/lakewatch/datasources/ingest/configure",
-}
-
-export const INGEST_ROUTES_OPTION2: IngestRoutes = {
-  ingestPath: "/lakewatch/datasources/ingest-v2",
-  configurePath: "/lakewatch/datasources/ingest-v2/configure",
-}
-
-const IngestRouteContext = React.createContext<IngestRoutes>(INGEST_ROUTES_OPTION1)
+const IngestRouteContext = React.createContext<IngestRoutePaths>(INGEST_ROUTES_OPTION1)
 
 export function IngestRouteProvider({
   routes,
   children,
 }: {
-  routes: IngestRoutes
+  routes: IngestRoutePaths
   children: React.ReactNode
 }) {
   return (

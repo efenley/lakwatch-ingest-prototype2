@@ -24,6 +24,7 @@ import {
   TableIcon,
 } from "@/components/icons"
 import { cn } from "@/lib/utils"
+import { DATASOURCES_LIST_PATH } from "../../_shared/datasource-routes"
 
 const SOURCE_OPTIONS = [
   {
@@ -109,7 +110,7 @@ export function IngestSourceSelection({ baseHref, configureHref }: IngestSourceS
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href={baseHref}>Current datasources</Link>
+                <Link href={DATASOURCES_LIST_PATH}>Current datasources</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />

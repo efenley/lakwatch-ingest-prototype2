@@ -19,9 +19,13 @@ import { IngestWizardShell } from "../IngestWizardShell"
 import { ConfigurePreviewPanel } from "../../_shared/ConfigurePreviewPanel"
 import { buildIngestWizardSteps } from "../../_shared/ingest-step-navigation"
 import { useIngestRoutes } from "../../../_shared/ingest-route-context"
+import { INGEST_ROUTES_OPTION2 } from "../../../_shared/ingest-route-constants"
 import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, isConfigureTableActive, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
 import { TimeColumnFieldListDialog } from "./TimeColumnFieldListDialog"
+import { ConfigureWithPresetDialog } from "./ConfigureWithPresetDialog"
+import { CLOUDTRAIL_IAM_PIPELINE_PATH } from "../../../_shared/pipeline-routes"
 import { PreTransformsField } from "./PreTransformsField"
+import { SchemaHintsAndVariantFields } from "./SchemaHintsAndVariantFields"
 
 const AUTO_CONFIGURE_DURATION_MS = 2500
 const DEFAULT_TIME_COLUMN = "eventTime"
@@ -45,6 +49,7 @@ function TableConfigurationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { ingestPath, configurePath } = useIngestRoutes()
+  const showConfigureWithPreset = configurePath === INGEST_ROUTES_OPTION2.configurePath
   const location = searchParams.get("location") ?? ""
   const [status, setStatus] = React.useState<AutoConfigureStatus>(() =>
     searchParams.get("configured") === "1" ? "complete" : "idle",
@@ -56,7 +61,10 @@ function TableConfigurationContent() {
     searchParams.get("configured") === "1" ? DEFAULT_TIME_COLUMN : "",
   )
   const [fieldListOpen, setFieldListOpen] = React.useState(false)
+  const [presetDialogOpen, setPresetDialogOpen] = React.useState(false)
   const [preTransforms, setPreTransforms] = React.useState<string[]>([])
+  const [loadAsSingleVariant, setLoadAsSingleVariant] = React.useState(false)
+  const [schemaHints, setSchemaHints] = React.useState("")
 
   React.useEffect(() => {
     if (status !== "loading") return
@@ -91,6 +99,21 @@ function TableConfigurationContent() {
     setFormat("")
     setTimeColumn("")
     setStatus("loading")
+  }
+
+  function handleConfigureWithPreset() {
+    setPresetDialogOpen(true)
+  }
+
+  function handleCloudTrailPresetSelect() {
+    const params = new URLSearchParams()
+    if (location) params.set("location", location)
+    const query = params.toString()
+    router.push(
+      query
+        ? `${CLOUDTRAIL_IAM_PIPELINE_PATH}?${query}`
+        : CLOUDTRAIL_IAM_PIPELINE_PATH,
+    )
   }
 
   function handleManualConfigure() {
@@ -138,7 +161,9 @@ function TableConfigurationContent() {
             className="shrink-0"
             disabled={isLoading}
             onAutoConfigure={handleAutoConfigure}
+            onConfigureWithPreset={handleConfigureWithPreset}
             onManualConfigure={handleManualConfigure}
+            showConfigureWithPreset={showConfigureWithPreset}
           />
         </div>
 
@@ -198,6 +223,15 @@ function TableConfigurationContent() {
           </div>
           <FieldSpinner show={isLoading} className="mb-1" />
         </div>
+
+        <SchemaHintsAndVariantFields
+          loadAsSingleVariant={loadAsSingleVariant}
+          schemaHints={schemaHints}
+          onLoadAsSingleVariantChange={setLoadAsSingleVariant}
+          onSchemaHintsChange={setSchemaHints}
+          disabled={fieldsDisabled}
+          isLoading={isLoading}
+        />
       </IngestStepCard>
     </IngestWizardShell>
 
@@ -206,6 +240,12 @@ function TableConfigurationContent() {
         onOpenChange={setFieldListOpen}
         value={timeColumn}
         onSave={setTimeColumn}
+      />
+
+      <ConfigureWithPresetDialog
+        open={presetDialogOpen}
+        onOpenChange={setPresetDialogOpen}
+        onCloudTrailSelect={handleCloudTrailPresetSelect}
       />
     </>
   )

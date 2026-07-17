@@ -13,6 +13,7 @@ export const INGEST_CONFIGURE_PATH: Record<IngestVariant, string> = {
 }
 
 const DATASOURCES_LIST_PATH = "/lakewatch/datasources"
+const PIPELINE_PATH_PREFIX = "/lakewatch/datasources/pipeline"
 
 const DATASOURCE_LIST_QUERY_KEYS = [
   PROTOTYPE_QUERY_KEY,
@@ -26,6 +27,13 @@ const DATASOURCE_LIST_QUERY_KEYS = [
 
 export function isDatasourcesListPath(pathname: string) {
   return pathname === DATASOURCES_LIST_PATH || pathname === `${DATASOURCES_LIST_PATH}/`
+}
+
+export function isPipelinePath(pathname: string) {
+  return (
+    pathname === PIPELINE_PATH_PREFIX ||
+    pathname.startsWith(`${PIPELINE_PATH_PREFIX}/`)
+  )
 }
 
 export function parseIngestVariant(search: string | URLSearchParams): IngestVariant {
@@ -42,6 +50,7 @@ export function getIngestVariant(pathname: string, search = ""): IngestVariant |
     return "option1"
   }
   if (isDatasourcesListPath(pathname)) return parseIngestVariant(search)
+  if (isPipelinePath(pathname)) return parseIngestVariant(search)
   return null
 }
 
@@ -87,6 +96,25 @@ export function getSwitcherTargetPath(
     const suffix = pathname.slice(currentBase.length)
     const query = search.replace(/^\?/, "")
     return query ? `${targetBase}${suffix}?${query}` : `${targetBase}${suffix}`
+  }
+
+  if (isDatasourcesListPath(pathname)) {
+    return getDatasourcesListPathForVariant(variant, search)
+  }
+
+  if (isPipelinePath(pathname)) {
+    if (variant === "option2") {
+      const params = new URLSearchParams(search.replace(/^\?/, ""))
+      const location = params.get("location")
+      return location
+        ? `${INGEST_CONFIGURE_PATH.option2}?location=${encodeURIComponent(location)}`
+        : INGEST_CONFIGURE_PATH.option2
+    }
+
+    const params = new URLSearchParams(search.replace(/^\?/, ""))
+    params.set(PROTOTYPE_QUERY_KEY, "option1")
+    const query = params.toString()
+    return query ? `${pathname}?${query}` : pathname
   }
 
   return getIngestPathForVariant(variant, search)
