@@ -35,7 +35,7 @@ export function SchemaHintsAndVariantFields({
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex flex-col gap-1">
             <Label className="text-sm font-semibold text-foreground">
-              Load as single variant
+              Load as single variant (optional)
             </Label>
             <p className="text-hint text-muted-foreground">
               When enabled, all data is stored in a single variant column. Automatically
@@ -67,7 +67,7 @@ export function SchemaHintsAndVariantFields({
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex flex-col gap-1">
             <Label htmlFor="schema-hints" className="text-sm font-semibold text-foreground">
-              Schema hints
+              Schema hints (optional)
             </Label>
             <p className="text-hint text-muted-foreground">
               Enter schema hints to customize how columns are mapped and typed.

@@ -55,10 +55,10 @@ export function IngestWizardShell({
   const { ingestPath } = useIngestRoutes()
 
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden p-4 pb-0">
-        <div className="flex min-w-0 items-center justify-between gap-4">
-        <Breadcrumb className="min-w-0">
+    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-hidden p-4 pb-0">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-4">
+        <Breadcrumb className="min-w-0 flex-1">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
@@ -76,7 +76,7 @@ export function IngestWizardShell({
         </Breadcrumb>
 
         <Select defaultValue="dedemos-serverless">
-          <SelectTrigger className="h-7 w-[260px] rounded">
+          <SelectTrigger className="h-7 w-[260px] shrink-0 rounded">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -128,7 +128,7 @@ export function IngestWizardShell({
         {stepNav ? <div className="shrink-0">{stepNav}</div> : null}
       </div>
       </div>
-      {preview ? <div className="shrink-0">{preview}</div> : null}
+      {preview ? <div className="min-w-0 shrink-0 overflow-x-hidden">{preview}</div> : null}
     </div>
   )
 }

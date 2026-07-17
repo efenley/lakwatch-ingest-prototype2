@@ -104,7 +104,7 @@ export function Stepper({
       className={cn(
         "flex m-0 p-0 list-none w-full",
         // DuBois: gap-2 (8px) horizontal, gap-1 (4px) vertical
-        isHorizontal ? "flex-row flex-wrap items-start gap-2" : "flex-col items-start gap-1 min-w-0 overflow-x-hidden",
+        isHorizontal ? "flex-row flex-wrap items-start gap-2" : "flex-col items-start gap-1 min-w-0 overflow-x-hidden overflow-y-hidden",
         className
       )}
     >

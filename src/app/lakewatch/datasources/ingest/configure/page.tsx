@@ -65,7 +65,7 @@ function ConfigurePageContent() {
         >
           <div className="flex flex-col gap-1">
             <span className="text-sm font-semibold text-foreground">Data location</span>
-            <p className="text-hint text-muted-foreground">
+            <p className="text-hint break-words text-muted-foreground">
               A Unity Catalog table or view to expose through the Lakewatch bronze view.
               Enter a fully qualified name in the format catalog.schema.table.
             </p>

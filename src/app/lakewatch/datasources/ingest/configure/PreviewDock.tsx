@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/table"
 
 const PREVIEW_DOCK_SHELL_CLASS =
-  "relative z-10 flex w-full shrink-0 flex-col border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]"
+  "relative z-10 flex w-full min-w-0 shrink-0 flex-col overflow-x-hidden border-t border-border bg-secondary shadow-[0_-4px_12px_-4px_rgba(0,0,0,0.08)]"
 
 const PREVIEW_TABLE_BODY_CLASS =
-  "max-h-[235px] w-full overflow-auto bg-secondary [&_[data-slot=table-container]]:w-full [&_[data-slot=table-container]]:p-0 [&_[data-slot=table-row]]:h-6 [&_[data-slot=table-head]]:h-6 [&_[data-slot=table-head]]:py-0 [&_[data-slot=table-cell]]:h-6 [&_[data-slot=table-cell]]:py-0"
+  "max-h-[235px] w-full min-w-0 overflow-x-auto overflow-y-auto bg-secondary [&_[data-slot=table-container]]:w-full [&_[data-slot=table-container]]:min-w-0 [&_[data-slot=table-container]]:p-0 [&_[data-slot=table-row]]:h-6 [&_[data-slot=table-head]]:h-6 [&_[data-slot=table-head]]:py-0 [&_[data-slot=table-cell]]:h-6 [&_[data-slot=table-cell]]:py-0"
 
 interface PreviewDockHeaderProps {
   title: string

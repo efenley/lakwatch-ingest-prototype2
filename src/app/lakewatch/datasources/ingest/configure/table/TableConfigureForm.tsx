@@ -246,7 +246,7 @@ export function TableConfigureForm({
 
       <div className="flex items-start gap-3">
         <FormField
-          label="Load as single variant"
+          label="Load as single variant (optional)"
           hint="When enabled, all data is stored in a single variant column. Automatically disabled when schema hints are provided."
           className="min-w-0 flex-1"
         >
@@ -281,7 +281,7 @@ export function TableConfigureForm({
 
       <div className="flex items-start gap-3">
         <FormField
-          label="Schema hints"
+          label="Schema hints (optional)"
           hint="Enter schema hints to customize how columns are mapped and typed."
           className="min-w-0 flex-1"
         >
