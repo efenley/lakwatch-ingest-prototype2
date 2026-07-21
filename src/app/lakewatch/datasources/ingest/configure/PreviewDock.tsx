@@ -201,6 +201,91 @@ export function TablePreviewPanel({ tableName = "aws_sec_lake_bronze" }: TablePr
   )
 }
 
+function PreviewPaneLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="border-b border-border bg-secondary px-3 py-2">
+      <span className="text-sm font-semibold text-foreground">{children}</span>
+    </div>
+  )
+}
+
+function OneColumnPreviewTable() {
+  return (
+    <div className={PREVIEW_TABLE_BODY_CLASS}>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-6 p-0" />
+            <TableHead className="font-semibold text-foreground">data</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {LOADING_PREVIEW_ROWS.map((row, index) => (
+            <TableRow key={index}>
+              <TableCell className="w-6 p-0">
+                <Button
+                  variant="ghost"
+                  size="icon-xs"
+                  className="size-6"
+                  disabled
+                  aria-label="Expand row"
+                >
+                  <ChevronRightIcon size={16} className="text-muted-foreground" />
+                </Button>
+              </TableCell>
+              <TableCell className="max-w-0 truncate text-foreground">{row}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+function MultiColumnPreviewTable() {
+  return (
+    <div className={PREVIEW_TABLE_BODY_CLASS}>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[140px] font-semibold text-foreground">event_uuid</TableHead>
+            <TableHead className="w-[120px] font-semibold text-foreground">event_time</TableHead>
+            <TableHead className="font-semibold text-foreground">event_data</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {PREVIEW_ROWS.map((row) => (
+            <TableRow key={row.eventUuid}>
+              <TableCell className="max-w-[140px] truncate text-foreground">{row.eventUuid}</TableCell>
+              <TableCell className="max-w-[120px] truncate text-foreground">{row.eventTime}</TableCell>
+              <TableCell className="max-w-0 truncate text-foreground">{row.eventData}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+export function SideBySideTablePreviewPanel({
+  tableName = "aws_sec_lake_bronze",
+}: TablePreviewPanelProps) {
+  return (
+    <PreviewDockShell title={tableName}>
+      <div className="grid min-h-0 w-full grid-cols-2 bg-secondary">
+        <div className="flex min-w-0 flex-col">
+          <PreviewPaneLabel>Raw</PreviewPaneLabel>
+          <OneColumnPreviewTable />
+        </div>
+        <div className="flex min-w-0 flex-col border-l border-grey-300">
+          <PreviewPaneLabel>Bronze</PreviewPaneLabel>
+          <MultiColumnPreviewTable />
+        </div>
+      </div>
+    </PreviewDockShell>
+  )
+}
+
 interface PreviewDockLayoutProps {
   header?: React.ReactNode
   children: React.ReactNode

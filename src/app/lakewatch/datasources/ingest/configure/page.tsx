@@ -10,7 +10,7 @@ import {
 import { DataLocationPicker } from "../_shared/DataLocationPicker"
 import { ConfigurePreviewPanel } from "../_shared/ConfigurePreviewPanel"
 import { buildIngestWizardSteps } from "../_shared/ingest-step-navigation"
-import { useIngestRoutes } from "../../_shared/ingest-route-context"
+import { INGEST_CONFIGURE_PATH, INGEST_PATH } from "../_shared/ingest-routes"
 import { IngestStepCard } from "./IngestStepCard"
 import { IngestWizardShell } from "./IngestWizardShell"
 
@@ -22,7 +22,8 @@ const DEFAULT_ADVANCED_OPTIONS: AdvancedOptionsState = {
 function ConfigurePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { ingestPath, configurePath } = useIngestRoutes()
+  const ingestPath = INGEST_PATH
+  const configurePath = INGEST_CONFIGURE_PATH
   const [dataLocation, setDataLocation] = React.useState("")
   const [advancedOpen, setAdvancedOpen] = React.useState(false)
   const [advancedOptions, setAdvancedOptions] = React.useState(DEFAULT_ADVANCED_OPTIONS)
@@ -47,7 +48,6 @@ function ConfigurePageContent() {
       <IngestWizardShell
         currentStepIndex={0}
         steps={buildIngestWizardSteps({
-          configurePath,
           currentStepIndex: 0,
           location: dataLocation,
         })}

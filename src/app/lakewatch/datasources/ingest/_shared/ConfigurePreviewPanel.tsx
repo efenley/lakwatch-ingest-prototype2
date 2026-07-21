@@ -1,6 +1,9 @@
 "use client"
 
-import { DataPreviewLoadingPanel, TablePreviewPanel } from "../configure/PreviewDock"
+import {
+  DataPreviewLoadingPanel,
+  SideBySideTablePreviewPanel,
+} from "../configure/PreviewDock"
 import type { ConfigureTableStatus } from "./AutoConfigureSplitButton"
 import { LocationPreviewPanel } from "./location-preview-panel"
 import { useLocationDataPreview } from "./useLocationDataPreview"
@@ -13,6 +16,8 @@ interface ConfigurePreviewPanelProps {
   tableName?: string
   /** Show location data immediately (e.g. step 2 after step 1). */
   carryLocationPreview?: boolean
+  /** Step 2 table fields are filled in manually or via auto-configure. */
+  isTableConfigured?: boolean
 }
 
 export function ConfigurePreviewPanel({
@@ -20,19 +25,20 @@ export function ConfigurePreviewPanel({
   autoConfigureStatus = "idle",
   tableName = DEFAULT_TABLE_NAME,
   carryLocationPreview = false,
+  isTableConfigured = false,
 }: ConfigurePreviewPanelProps) {
   const showLocationPreview =
     hasLocation &&
-    autoConfigureStatus !== "loading" &&
-    autoConfigureStatus !== "complete"
+    !isTableConfigured &&
+    autoConfigureStatus !== "loading"
   const locationPreviewStatus = useLocationDataPreview(showLocationPreview, carryLocationPreview)
-
-  if (autoConfigureStatus === "complete") {
-    return <TablePreviewPanel tableName={tableName} />
-  }
 
   if (autoConfigureStatus === "loading") {
     return <DataPreviewLoadingPanel />
+  }
+
+  if (isTableConfigured) {
+    return <SideBySideTablePreviewPanel tableName={tableName} />
   }
 
   return <LocationPreviewPanel status={locationPreviewStatus} />

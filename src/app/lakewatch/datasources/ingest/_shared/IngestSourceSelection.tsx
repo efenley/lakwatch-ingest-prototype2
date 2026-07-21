@@ -104,7 +104,7 @@ export function IngestSourceSelection({ baseHref, configureHref }: IngestSourceS
   const router = useRouter()
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 pb-16">
+    <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
       <div className="flex items-center justify-between gap-4">
         <Breadcrumb>
           <BreadcrumbList>

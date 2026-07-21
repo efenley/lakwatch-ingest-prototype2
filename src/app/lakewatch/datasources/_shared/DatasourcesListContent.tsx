@@ -27,10 +27,7 @@ import {
   PlusIcon,
   RunningIcon,
 } from "@/components/icons"
-import {
-  getIngestPathForVariant,
-  parseIngestVariant,
-} from "../ingest/_shared/ingest-variant"
+import { INGEST_PATH } from "../ingest/_shared/ingest-routes"
 import { DatasourceDetailPanel } from "./DatasourceDetailPanel"
 import {
   DATASOURCES_LIST_PATH,
@@ -58,7 +55,7 @@ export function DatasourcesListContent() {
   const searchParams = useSearchParams()
   const createdDatasource = parseCreatedDatasourceParams(searchParams)
   const activeDatasource = createdDatasource ?? DEFAULT_DATASOURCE
-  const ingestHref = getIngestPathForVariant(parseIngestVariant(searchParams))
+  const ingestHref = INGEST_PATH
 
   const [searchQuery, setSearchQuery] = React.useState(activeDatasource.name)
   const [detailOpen, setDetailOpen] = React.useState(createdDatasource !== null)
@@ -79,7 +76,7 @@ export function DatasourcesListContent() {
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
-      <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-4 pb-16">
+      <div className="flex min-w-0 flex-1 flex-col gap-4 overflow-y-auto p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-2xl font-semibold leading-none text-foreground">Datasources</h1>
           <div className="flex flex-wrap items-center justify-end gap-2">

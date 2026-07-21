@@ -1,12 +1,11 @@
 import type { Step } from "@/components/ui/stepper"
+import { INGEST_CONFIGURE_PATH } from "./ingest-routes"
 
-export function getIngestStepPaths(configurePath: string) {
-  return [
-    configurePath,
-    `${configurePath}/table`,
-    `${configurePath}/details`,
-  ] as const
-}
+export const INGEST_STEP_PATHS = [
+  INGEST_CONFIGURE_PATH,
+  `${INGEST_CONFIGURE_PATH}/table`,
+  `${INGEST_CONFIGURE_PATH}/details`,
+] as const
 
 export interface IngestStepNavParams {
   location?: string
@@ -14,11 +13,10 @@ export interface IngestStepNavParams {
 }
 
 export function buildIngestStepHref(
-  stepPaths: readonly string[],
   stepIndex: number,
   params: IngestStepNavParams = {},
 ): string {
-  const base = stepPaths[stepIndex]
+  const base = INGEST_STEP_PATHS[stepIndex]
   const searchParams = new URLSearchParams()
   if (params.location) searchParams.set("location", params.location)
   if (stepIndex >= 1 && params.configured) searchParams.set("configured", "1")
@@ -27,7 +25,6 @@ export function buildIngestStepHref(
 }
 
 export interface BuildIngestWizardStepsOptions {
-  configurePath: string
   currentStepIndex: number
   location: string
   tableConfigured?: boolean
@@ -40,12 +37,10 @@ const INGEST_STEP_TITLES = [
 ] as const
 
 export function buildIngestWizardSteps({
-  configurePath,
   currentStepIndex,
   location,
   tableConfigured = false,
 }: BuildIngestWizardStepsOptions): Step[] {
-  const stepPaths = getIngestStepPaths(configurePath)
   const hasLocation = location.trim().length > 0
 
   return INGEST_STEP_TITLES.map((title, index) => {
@@ -58,18 +53,18 @@ export function buildIngestWizardSteps({
     if (!isCurrent) {
       if (index === 0) {
         disabled = false
-        href = buildIngestStepHref(stepPaths, 0, {
+        href = buildIngestStepHref(0, {
           location: hasLocation ? location : undefined,
         })
       } else if (index === 1 && hasLocation) {
         disabled = false
-        href = buildIngestStepHref(stepPaths, 1, {
+        href = buildIngestStepHref(1, {
           location,
           configured: tableConfigured,
         })
       } else if (index === 2 && hasLocation && tableConfigured) {
         disabled = false
-        href = buildIngestStepHref(stepPaths, 2, { location })
+        href = buildIngestStepHref(2, { location })
       }
     }
 

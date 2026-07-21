@@ -18,12 +18,13 @@ import { IngestStepCard } from "../IngestStepCard"
 import { IngestWizardShell } from "../IngestWizardShell"
 import { ConfigurePreviewPanel } from "../../_shared/ConfigurePreviewPanel"
 import { buildIngestWizardSteps } from "../../_shared/ingest-step-navigation"
-import { useIngestRoutes } from "../../../_shared/ingest-route-context"
-import { INGEST_ROUTES_OPTION2 } from "../../../_shared/ingest-route-constants"
-import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, isConfigureTableActive, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
+import { INGEST_CONFIGURE_PATH, INGEST_PATH } from "../../_shared/ingest-routes"
+import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
 import { TimeColumnFieldListDialog } from "./TimeColumnFieldListDialog"
-import { ConfigureWithPresetDialog } from "./ConfigureWithPresetDialog"
-import { CLOUDTRAIL_IAM_PIPELINE_PATH } from "../../../_shared/pipeline-routes"
+import {
+  AutoConfigureOverwriteDialog,
+  hasManualTableInputs,
+} from "./AutoConfigureOverwriteDialog"
 import { PreTransformsField } from "./PreTransformsField"
 import { SchemaHintsAndVariantFields } from "./SchemaHintsAndVariantFields"
 
@@ -48,11 +49,9 @@ function FieldSpinner({ show, className }: { show: boolean; className?: string }
 function TableConfigurationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { ingestPath, configurePath } = useIngestRoutes()
-  const showConfigureWithPreset = configurePath === INGEST_ROUTES_OPTION2.configurePath
   const location = searchParams.get("location") ?? ""
   const [status, setStatus] = React.useState<AutoConfigureStatus>(() =>
-    searchParams.get("configured") === "1" ? "complete" : "idle",
+    searchParams.get("configured") === "1" ? "complete" : "manual",
   )
   const [format, setFormat] = React.useState(() =>
     searchParams.get("configured") === "1" ? DEFAULT_FORMAT : "",
@@ -61,7 +60,7 @@ function TableConfigurationContent() {
     searchParams.get("configured") === "1" ? DEFAULT_TIME_COLUMN : "",
   )
   const [fieldListOpen, setFieldListOpen] = React.useState(false)
-  const [presetDialogOpen, setPresetDialogOpen] = React.useState(false)
+  const [overwriteDialogOpen, setOverwriteDialogOpen] = React.useState(false)
   const [preTransforms, setPreTransforms] = React.useState<string[]>([])
   const [loadAsSingleVariant, setLoadAsSingleVariant] = React.useState(false)
   const [schemaHints, setSchemaHints] = React.useState("")
@@ -76,56 +75,50 @@ function TableConfigurationContent() {
     return () => window.clearTimeout(timer)
   }, [status])
 
-  const cancelHref = ingestPath
+  const cancelHref = INGEST_PATH
   const previousHref = location
-    ? `${configurePath}?location=${encodeURIComponent(location)}`
-    : configurePath
+    ? `${INGEST_CONFIGURE_PATH}?location=${encodeURIComponent(location)}`
+    : INGEST_CONFIGURE_PATH
 
   const isLoading = status === "loading"
-  const isConfigured = isConfigureTableActive(status)
   const fieldsDisabled = areConfigureTableFieldsDisabled(status)
   const hasLocation = location.trim().length > 0
   const canProceed =
-    isConfigured && format.trim().length > 0 && timeColumn.trim().length > 0 && !isLoading
+    format.trim().length > 0 && timeColumn.trim().length > 0 && !isLoading
 
   const wizardSteps = buildIngestWizardSteps({
-    configurePath,
     currentStepIndex: 1,
     location,
     tableConfigured: canProceed,
   })
 
-  function handleAutoConfigure() {
+  function startAutoConfigure() {
     setFormat("")
     setTimeColumn("")
     setStatus("loading")
   }
 
-  function handleConfigureWithPreset() {
-    setPresetDialogOpen(true)
-  }
+  function handleAutoConfigure() {
+    if (
+      hasManualTableInputs({
+        format,
+        timeColumn,
+        preTransforms,
+        loadAsSingleVariant,
+        schemaHints,
+      })
+    ) {
+      setOverwriteDialogOpen(true)
+      return
+    }
 
-  function handleCloudTrailPresetSelect() {
-    const params = new URLSearchParams()
-    if (location) params.set("location", location)
-    const query = params.toString()
-    router.push(
-      query
-        ? `${CLOUDTRAIL_IAM_PIPELINE_PATH}?${query}`
-        : CLOUDTRAIL_IAM_PIPELINE_PATH,
-    )
-  }
-
-  function handleManualConfigure() {
-    setFormat("")
-    setTimeColumn("")
-    setStatus("manual")
+    startAutoConfigure()
   }
 
   function handleNext() {
     const params = new URLSearchParams()
     if (location) params.set("location", location)
-    router.push(`${configurePath}/details?${params.toString()}`)
+    router.push(`${INGEST_CONFIGURE_PATH}/details?${params.toString()}`)
   }
 
   return (
@@ -141,6 +134,7 @@ function TableConfigurationContent() {
           autoConfigureStatus={status}
           tableName={PREVIEW_TABLE_NAME}
           carryLocationPreview
+          isTableConfigured={canProceed}
         />
       }
     >
@@ -161,9 +155,6 @@ function TableConfigurationContent() {
             className="shrink-0"
             disabled={isLoading}
             onAutoConfigure={handleAutoConfigure}
-            onConfigureWithPreset={handleConfigureWithPreset}
-            onManualConfigure={handleManualConfigure}
-            showConfigureWithPreset={showConfigureWithPreset}
           />
         </div>
 
@@ -242,10 +233,10 @@ function TableConfigurationContent() {
         onSave={setTimeColumn}
       />
 
-      <ConfigureWithPresetDialog
-        open={presetDialogOpen}
-        onOpenChange={setPresetDialogOpen}
-        onCloudTrailSelect={handleCloudTrailPresetSelect}
+      <AutoConfigureOverwriteDialog
+        open={overwriteDialogOpen}
+        onOpenChange={setOverwriteDialogOpen}
+        onContinue={startAutoConfigure}
       />
     </>
   )

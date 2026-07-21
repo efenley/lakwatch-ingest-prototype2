@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Stepper, type Step } from "@/components/ui/stepper"
 import { ChevronRightIcon } from "@/components/icons"
-import { useIngestRoutes } from "../../_shared/ingest-route-context"
+import { INGEST_PATH } from "../_shared/ingest-routes"
 
 export const INGEST_STEPS = [
   { title: "Location" },
@@ -52,7 +52,7 @@ export function IngestWizardShell({
   children,
 }: IngestWizardShellProps) {
   const stepperSteps = steps ?? [...INGEST_STEPS]
-  const { ingestPath } = useIngestRoutes()
+  const ingestPath = INGEST_PATH
 
   return (
     <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
