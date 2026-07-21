@@ -11,7 +11,7 @@ import {
   isAdditionalDetailsValid,
 } from "./AdditionalDetailsForm"
 import { buildIngestWizardSteps } from "../../_shared/ingest-step-navigation"
-import { INGEST_CONFIGURE_PATH, INGEST_PATH } from "../../_shared/ingest-routes"
+import { useIngestRoutes } from "../../../_shared/ingest-route-context"
 import { buildDatasourcesListUrl } from "../../../_shared/datasource-routes"
 
 const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
@@ -19,8 +19,7 @@ const PREVIEW_TABLE_NAME = "aws_sec_lake_bronze"
 function AdditionalDetailsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const ingestPath = INGEST_PATH
-  const configurePath = INGEST_CONFIGURE_PATH
+  const { ingestPath, configurePath } = useIngestRoutes()
   const location = searchParams.get("location") ?? ""
 
   const [datasourceCatalog, setDatasourceCatalog] = React.useState("staging")
@@ -37,6 +36,7 @@ function AdditionalDetailsContent() {
     : `${configurePath}/table?configured=1`
 
   const detailsSteps = buildIngestWizardSteps({
+    configurePath,
     currentStepIndex: 2,
     location,
     tableConfigured: true,

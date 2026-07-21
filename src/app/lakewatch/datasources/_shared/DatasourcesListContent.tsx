@@ -27,7 +27,7 @@ import {
   PlusIcon,
   RunningIcon,
 } from "@/components/icons"
-import { INGEST_PATH } from "../ingest/_shared/ingest-routes"
+import { getIngestPathForVariant, parseIngestVariant } from "../ingest/_shared/ingest-variant"
 import { DatasourceDetailPanel } from "./DatasourceDetailPanel"
 import {
   DATASOURCES_LIST_PATH,
@@ -55,7 +55,7 @@ export function DatasourcesListContent() {
   const searchParams = useSearchParams()
   const createdDatasource = parseCreatedDatasourceParams(searchParams)
   const activeDatasource = createdDatasource ?? DEFAULT_DATASOURCE
-  const ingestHref = INGEST_PATH
+  const ingestHref = getIngestPathForVariant(parseIngestVariant(searchParams))
 
   const [searchQuery, setSearchQuery] = React.useState(activeDatasource.name)
   const [detailOpen, setDetailOpen] = React.useState(createdDatasource !== null)

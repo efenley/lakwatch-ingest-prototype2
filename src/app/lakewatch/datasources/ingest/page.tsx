@@ -1,11 +1,15 @@
+"use client"
+
 import { IngestSourceSelection } from "./_shared/IngestSourceSelection"
-import { INGEST_CONFIGURE_PATH, INGEST_PATH } from "./_shared/ingest-routes"
+import { useIngestRoutes } from "../_shared/ingest-route-context"
 
 export default function IngestPage() {
+  const { ingestPath, configurePath } = useIngestRoutes()
+
   return (
     <IngestSourceSelection
-      baseHref={INGEST_PATH}
-      configureHref={INGEST_CONFIGURE_PATH}
+      baseHref={ingestPath}
+      configureHref={configurePath}
     />
   )
 }

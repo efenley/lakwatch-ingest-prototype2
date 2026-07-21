@@ -20,12 +20,11 @@ import {
 } from "@/components/ui/breadcrumb"
 import { ChevronRightIcon } from "@/components/icons"
 import { DATA_LOCATIONS } from "../../_shared/catalog-locations"
-import { INGEST_CONFIGURE_PATH, INGEST_PATH } from "../../_shared/ingest-routes"
+import { useIngestRoutes } from "../../../_shared/ingest-route-context"
 
 export default function BrowsePage() {
   const router = useRouter()
-  const ingestPath = INGEST_PATH
-  const configurePath = INGEST_CONFIGURE_PATH
+  const { ingestPath, configurePath } = useIngestRoutes()
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 overflow-hidden p-4">

@@ -18,7 +18,8 @@ import { IngestStepCard } from "../IngestStepCard"
 import { IngestWizardShell } from "../IngestWizardShell"
 import { ConfigurePreviewPanel } from "../../_shared/ConfigurePreviewPanel"
 import { buildIngestWizardSteps } from "../../_shared/ingest-step-navigation"
-import { INGEST_CONFIGURE_PATH, INGEST_PATH } from "../../_shared/ingest-routes"
+import { INGEST_ROUTES_OPTION2 } from "../../../_shared/ingest-route-constants"
+import { useIngestRoutes } from "../../../_shared/ingest-route-context"
 import { AutoConfigureSplitButton, areConfigureTableFieldsDisabled, type ConfigureTableStatus } from "../../_shared/AutoConfigureSplitButton"
 import { TimeColumnFieldListDialog } from "./TimeColumnFieldListDialog"
 import {
@@ -49,6 +50,8 @@ function FieldSpinner({ show, className }: { show: boolean; className?: string }
 function TableConfigurationContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { ingestPath, configurePath } = useIngestRoutes()
+  const isOption2 = configurePath === INGEST_ROUTES_OPTION2.configurePath
   const location = searchParams.get("location") ?? ""
   const [status, setStatus] = React.useState<AutoConfigureStatus>(() =>
     searchParams.get("configured") === "1" ? "complete" : "manual",
@@ -75,10 +78,10 @@ function TableConfigurationContent() {
     return () => window.clearTimeout(timer)
   }, [status])
 
-  const cancelHref = INGEST_PATH
+  const cancelHref = ingestPath
   const previousHref = location
-    ? `${INGEST_CONFIGURE_PATH}?location=${encodeURIComponent(location)}`
-    : INGEST_CONFIGURE_PATH
+    ? `${configurePath}?location=${encodeURIComponent(location)}`
+    : configurePath
 
   const isLoading = status === "loading"
   const fieldsDisabled = areConfigureTableFieldsDisabled(status)
@@ -87,6 +90,7 @@ function TableConfigurationContent() {
     format.trim().length > 0 && timeColumn.trim().length > 0 && !isLoading
 
   const wizardSteps = buildIngestWizardSteps({
+    configurePath,
     currentStepIndex: 1,
     location,
     tableConfigured: canProceed,
@@ -118,8 +122,16 @@ function TableConfigurationContent() {
   function handleNext() {
     const params = new URLSearchParams()
     if (location) params.set("location", location)
-    router.push(`${INGEST_CONFIGURE_PATH}/details?${params.toString()}`)
+    router.push(`${configurePath}/details?${params.toString()}`)
   }
+
+  const autoConfigureButton = (
+    <AutoConfigureSplitButton
+      className="shrink-0"
+      disabled={isLoading}
+      onAutoConfigure={handleAutoConfigure}
+    />
+  )
 
   return (
     <>
@@ -145,18 +157,22 @@ function TableConfigurationContent() {
         previousHref={previousHref}
         nextDisabled={!canProceed}
         onNextClick={handleNext}
+        headerActions={isOption2 ? autoConfigureButton : undefined}
       >
-        <div className="flex flex-nowrap items-start justify-between gap-4">
-          <p className="min-w-0 flex-1 text-sm text-foreground">
+        {isOption2 ? (
+          <p className="text-sm text-foreground">
             Auto-configure will scan your datasource and automatically infer format &amp; time
             column.
           </p>
-          <AutoConfigureSplitButton
-            className="shrink-0"
-            disabled={isLoading}
-            onAutoConfigure={handleAutoConfigure}
-          />
-        </div>
+        ) : (
+          <div className="flex flex-nowrap items-start justify-between gap-4">
+            <p className="min-w-0 flex-1 text-sm text-foreground">
+              Auto-configure will scan your datasource and automatically infer format &amp; time
+              column.
+            </p>
+            {autoConfigureButton}
+          </div>
+        )}
 
         <div className="flex max-w-[610px] items-center gap-3">
           <div className="flex min-w-0 flex-1 flex-col gap-2">
